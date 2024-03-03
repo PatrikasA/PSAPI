@@ -1,8 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "dnf6LlcRCirpdcuEKF+Q1ORR9A4VPQj+sfSCA8kgUbf1MZeSj7js5lWHotTkTPF3WZwQM4SaOWIEUU3BS1L49g==",
+  "dgSpecHash": "z2n1zcHwA4IexJPgH9Sh9r9vYb6i62lVEBlx5txJqPgjh2eCS7gzDqSUARr2nkf0llejkKRF1QNSrLjbPoZGIg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Armalis\\Documents\\GitHub\\Pr-1330-04\\Restoranas\\Restoranas.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "C:\\ISP\\psapi\\Pr-1330-04\\Restoranas\\Restoranas.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\gytis\\.nuget\\packages\\jquery\\3.7.1\\jquery.3.7.1.nupkg.sha512",
+    "C:\\Users\\gytis\\.nuget\\packages\\jquery.ui.combined\\1.13.2\\jquery.ui.combined.1.13.2.nupkg.sha512"
+  ],
   "logs": []
 }
