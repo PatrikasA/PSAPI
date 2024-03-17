@@ -16,3 +16,26 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.phone {
+    max-width: 450px;
+    margin: 0 auto;
+}
+
+.center {
+    text-align: center;
+}
+.skiltiespavadinimas {
+    margin-top: 10px;
+    font-weight: bold;
+    font-size: 1.2em;
+    background-color: #f0f0f0;
+}
+.skiltis {
+    margin: 20px;
+    background-color: #f0f0f0;
+    border: 1px solid #000;
+}
+.mygtukas{
+    height: 70px;
+}
