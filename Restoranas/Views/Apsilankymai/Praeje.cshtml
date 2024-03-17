@@ -1,0 +1,59 @@
+﻿@{
+    ViewData["Title"] = "Praeje";
+}
+<div class="phone">
+    <div class="row mb-3">
+        <div class="col">
+            <h1 class="center">Klientas | Jonas Jonaitis</h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-6 col-md-4">
+            <a class="btn btn-outline-dark  btn-block d-flex align-items-center justify-content-center"
+               asp-area="" asp-controller="Apsilankymai" asp-action="Aktualiausi">Aktualiausi apsilankymai</a>
+        </div>
+        <div class="col-6 col-md-4">
+            <a class="btn btn-outline-dark btn-block d-flex align-items-center justify-content-center"
+               asp-area="" asp-controller="Apsilankymai" asp-action="Meniu">Patiekalų Meniu</a>
+        </div>
+        <div class="col-6 col-md-4">
+            <a class="btn btn-dark btn-block d-flex align-items-center justify-content-center"
+               asp-area="" asp-controller="Apsilankymai" asp-action="Praeje">Praėję apsilankymai</a>
+        </div>
+    </div>
+
+
+    <div class="skiltiespavadinimas">
+        <p class="center">Praėję apsilankymai</p>
+    </div>
+
+    <div class="skiltis p-3">
+        <div>
+            <p><strong>Kovo 2, Šeštadienis, 14:45</strong></p>
+            <p><strong>Žmonių kiekis:</strong> 2</p>
+            <p><strong>Staliuko Nr:</strong> 15</p>
+            <p><strong>Užsakyti patiekalai:</strong></p>
+            <p>Vištienos kepsnys su sūriu, 6.79€</p>
+            <p>Burokėlių sriuba, 3.99€</p>
+            <div class="row">
+                <div class="col-12 col-md-8 offset-md-2">
+                    <button class="btn btn-outline-dark btn-block">Apmokėti sąskaitą</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="skiltis p-3">
+        <div>
+            <p><strong>Kovo 1, Penktadienis, 12:30</strong></p>
+            <p><strong>Žmonių kiekis:</strong> 1</p>
+            <p><strong>Staliuko Nr:</strong> 5</p>
+            <p><strong>Užsakyti patiekalai:</strong></p>
+            <p>Vištienos kepsnys su sūriu, 6.79€</p>
+            <p>Varškinis pieno kokteilis, 4.99€</p>
+            <p><strong>Apmokėta</strong></p>
+        </div>
+    </div>
+
+</div>
