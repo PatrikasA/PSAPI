@@ -5,24 +5,23 @@
 <div class="phone">
     <div class="text-center">
         <h1 class="display-4">Sveiki atvykę į restorano valdymo sistemą!</h1>
-        <p>Čia skaniausi burgeriai ir šviežiausios salotos</a>.</p>
+        <p>Čia skaniausi burgeriai ir šviežiausios salotos.</p>
     </div>
 
     <br />
-    <p class="center">Aš esu:</p>
-    <div class="row">
+    <p class="center">Prisijunkite arba užsiregistruokite:</p>
+    <div class="row justify-content-center">
         <div class="col-6 col-md-4">
             <a class="mygtukas btn btn-outline-dark btn-block d-flex align-items-center justify-content-center"
-            asp-area="" asp-controller="Apsilankymai" asp-action="Aktualiausi">Klientas</a>
+               href="@Url.Action("Login", "User")">Prisijungti</a>
         </div>
         <div class="col-6 col-md-4">
             <a class="mygtukas btn btn-outline-dark btn-block d-flex align-items-center justify-content-center"
-            asp-area="" asp-controller="Apsilankymai" asp-action="Aktualiausi">Salės darbuotojas</a>
+               href="@Url.Action("Register", "User")">Registruotis</a>
         </div>
         <div class="col-6 col-md-4">
             <a class="mygtukas btn btn-outline-dark btn-block d-flex align-items-center justify-content-center"
-            asp-area="" asp-controller="Apsilankymai" asp-action="Aktualiausi">Vadovas</a>
+               href="@Url.Action("GoogleLogin", "User")">Prisijungti su Google</a>
         </div>
     </div>
-
 </div>

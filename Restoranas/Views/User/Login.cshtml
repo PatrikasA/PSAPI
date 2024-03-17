@@ -1,0 +1,34 @@
+﻿@model Restoranas.Models.User
+
+@{
+    ViewBag.Title = "Prisijungimas";
+}
+
+<div class="container mt-5">
+    <div class="text-center">
+        <h2 class="display-4">Prisijungimas</h2>
+        <p>Prisijunkite, kad galėtumėte tęsti</p>
+    </div>
+
+    <form asp-action="Login" method="post" class="mt-4">
+        @Html.AntiForgeryToken()
+
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="form-group">
+            <label asp-for="prisijungimo_vardas" class="control-label">Prisijungimo vardas</label>
+            <input asp-for="prisijungimo_vardas" class="form-control" />
+            <span asp-validation-for="prisijungimo_vardas" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="slaptazodis" class="control-label">Slaptažodis</label>
+            <input asp-for="slaptazodis" class="form-control" type="password" />
+            <span asp-validation-for="slaptazodis" class="text-danger"></span>
+        </div>
+
+        <div class="form-group text-center">
+            <input type="submit" value="Prisijungti" class="mygtukas btn btn-outline-dark" />
+        </div>
+    </form>
+</div>
