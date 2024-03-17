@@ -456,3 +456,10 @@ C:\ISP\psapi\Pr-1330-04\Restoranas\bin\Debug\net6.0\System.Diagnostics.Diagnosti
 C:\ISP\psapi\Pr-1330-04\Restoranas\bin\Debug\net6.0\System.Text.Encodings.Web.dll
 C:\ISP\psapi\Pr-1330-04\Restoranas\bin\Debug\net6.0\System.Text.Json.dll
 C:\ISP\psapi\Pr-1330-04\Restoranas\bin\Debug\net6.0\runtimes\browser\lib\net6.0\System.Text.Encodings.Web.dll
+C:\Users\P-Mac\Documents\GitHub\Pr-1330-04\Restoranas\bin\Debug\net6.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Users\P-Mac\Documents\GitHub\Pr-1330-04\Restoranas\bin\Debug\net6.0\Microsoft.Extensions.Logging.Abstractions.dll
+C:\Users\P-Mac\Documents\GitHub\Pr-1330-04\Restoranas\bin\Debug\net6.0\Npgsql.dll
+C:\Users\P-Mac\Documents\GitHub\Pr-1330-04\Restoranas\bin\Debug\net6.0\System.Diagnostics.DiagnosticSource.dll
+C:\Users\P-Mac\Documents\GitHub\Pr-1330-04\Restoranas\bin\Debug\net6.0\System.Text.Encodings.Web.dll
+C:\Users\P-Mac\Documents\GitHub\Pr-1330-04\Restoranas\bin\Debug\net6.0\System.Text.Json.dll
+C:\Users\P-Mac\Documents\GitHub\Pr-1330-04\Restoranas\bin\Debug\net6.0\runtimes\browser\lib\net6.0\System.Text.Encodings.Web.dll
