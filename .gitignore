@@ -1,0 +1,37 @@
+# Binaries for projects
+bin/
+obj/
+out/
+
+# VS Code directories
+.vscode/
+.vs/
+.idea/
+
+# Folder config file
+Desktop.ini
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Windows shortcuts
+*.lnk
+
+# JetBrains Rider
+.idea/
+
+# Output of 'npm pack'
+*.tgz
+
+# dotenv environment variables file
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+*.editorconfig
+*.cache
+dviratinas-api/dviratinas-api/appsettings.json
