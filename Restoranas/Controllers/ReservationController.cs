@@ -34,9 +34,9 @@ namespace Restoranas.Controllers
             // Jūsų esama logika gauti staliukų sąrašą
             return new List<TableInfo>
         {
-            new TableInfo { TableNumber = "1", Capacity = 4 },
-            new TableInfo { TableNumber = "2", Capacity = 6 },
-            new TableInfo { TableNumber = "3", Capacity = 2 }
+            new TableInfo { TableNumber = 1, Capacity = 4 },
+            new TableInfo { TableNumber = 2, Capacity = 6 },
+            new TableInfo { TableNumber = 3, Capacity = 2 }
         };
         }
 

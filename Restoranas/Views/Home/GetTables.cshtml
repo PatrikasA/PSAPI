@@ -1,0 +1,33 @@
+﻿@model List<Restoranas.Models.TableInfo>
+
+<h2>Tables</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TableNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Capacity)
+                </td>
+                <td>
+                    <a asp-action="EditTable" asp-route-id="@item.TableNumber">Edit</a> |
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
