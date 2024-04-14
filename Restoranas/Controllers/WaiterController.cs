@@ -59,5 +59,67 @@ namespace Restoranas.Controllers
             ViewBag.VisitId = id;
             return View();
         }
+
+        [HttpGet]
+        public IActionResult VisitDetails(int id)
+        {
+            ViewBag.VisitId = id;
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult EnterClientOrder(int id)
+        {
+            ViewBag.VisitId = id;
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult ModifyClientOrder(int id)
+        {
+            ViewBag.VisitId = id;
+            return View();
+        }
+
+
+        [HttpGet]
+        public IActionResult ClientOrderCheque(int id)
+        {
+            List<OrderItem> orderItems = new List<OrderItem>();
+            using (var conn = new NpgsqlConnection(connString))
+            {
+                conn.Open();
+                var query = @"
+                    SELECT up.kiekis, p.pavadinimas, p.kaina
+                    FROM uzsakytas_patiekalas up
+                    JOIN patiekalas p ON p.patiekalo_id = up.patiekalo_id
+                    WHERE up.apsilankymo_id = @VisitId AND p.parduodamas = true";
+
+                using (var cmd = new NpgsqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@VisitId", id);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            orderItems.Add(new OrderItem
+                            {
+                                Name = reader.GetString(reader.GetOrdinal("pavadinimas")),
+                                Count = reader.GetInt32(reader.GetOrdinal("kiekis")),
+                                Price = reader.GetDouble(reader.GetOrdinal("kaina"))
+                            });
+                        }
+                    }
+                }
+            }
+
+            double totalPrice = orderItems.Sum(item => item.Price * item.Count);
+
+            ViewBag.TotalPrice = totalPrice;
+            ViewBag.VisitId = id;
+            return View(orderItems);
+        }
+
     }
 }

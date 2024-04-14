@@ -1,0 +1,40 @@
+﻿@model List<Restoranas.Models.OrderItem>
+
+@{
+    ViewData["Title"] = "Client Order Cheque";
+    double totalPrice = ViewBag.TotalPrice;
+    int visitId = ViewBag.VisitId;
+}
+
+<h2>Client Order Cheque for Visit @visitId</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Item Name</th>
+            <th>Count</th>
+            <th>Price</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.Count</td>
+                <td>@(item.Price.ToString("C2"))</td>
+                <td>@((item.Price * item.Count).ToString("C2"))</td>
+            </tr>
+        }
+        <tr>
+            <th colspan="3">Total Price</th>
+            <th>@(totalPrice.ToString("C2"))</th>
+        </tr>
+    </tbody>
+</table>
+
+<div class="buttons">
+    <button onclick="history.back()" class="btn btn-danger">Atšaukti</button>
+    <a href="@Url.Action("SubmitCheque", "Waiter", new { id = visitId })" class="btn btn-success">Pateikti sąskaitą</a>
+</div>

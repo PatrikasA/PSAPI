@@ -8,12 +8,35 @@
 
 <a href="@Url.Action("CreateVisit", "Waiter")" class="btn btn-primary">Sukurti Apsilankymą</a>
 
-<ul>
-    @foreach (var visit in Model)
-    {
-        <li>
-            @Html.ActionLink("Visit Details", "VisitDetails", new { id = visit.apsilankymo_id })
-            <button onclick="location.href='@Url.Action("CancelVisitConfirmation", "Waiter", new { id = visit.apsilankymo_id })'">Cancel</button>
-        </li>
-    }
-</ul>
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Date</th>
+            <th>Number of People</th>
+            <th>Paid</th>
+            <th>User ID</th>
+            <th>Table Number</th>
+            <th>Completed</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var visit in Model)
+        {
+            <tr>
+                <td>@visit.apsilankymo_id</td>
+                <td>@visit.data.ToString("yyyy-MM-dd HH:mm")</td>
+                <td>@visit.zmoniu_skaicius</td>
+                <td>@(visit.apmoketas ? "Yes" : "No")</td>
+                <td>@visit.naudotojo_id</td>
+                <td>@visit.staliuko_nr</td>
+                <td>@(visit.uzbaigtas ? "Yes" : "No")</td>
+                <td>
+                    @Html.ActionLink("Details", "VisitDetails", new { id = visit.apsilankymo_id }, new { @class = "btn btn-info" })
+                    <button class="btn btn-warning" onclick="location.href='@Url.Action("CancelVisitConfirmation", "Waiter", new { id = visit.apsilankymo_id })'">Cancel</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
