@@ -1,9 +1,9 @@
 ﻿@{
-    ViewData["Title"] = "Cancel Visit Confirmation";
+    ViewData["Title"] = "Atšaukimo patvirtinimas";
 }
 
-<h2>Are you sure you want to cancel this visit?</h2>
+<h2>Ar tikrai norite atšaukti vizitą?</h2>
 
 <form method="post" action="@Url.Action("CancelVisit", "Waiter", new { id = ViewBag.VisitId })">
-    <button type="submit">Yes, Cancel It</button>
+    <button type="submit">Taip, atšaukti</button>
 </form>

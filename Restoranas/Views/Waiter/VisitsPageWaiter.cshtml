@@ -12,13 +12,13 @@
     <thead>
         <tr>
             <th>ID</th>
-            <th>Date</th>
-            <th>Number of People</th>
-            <th>Paid</th>
-            <th>User ID</th>
-            <th>Table Number</th>
-            <th>Completed</th>
-            <th>Actions</th>
+            <th>Data</th>
+            <th>Žmonių skaičius</th>
+            <th>Apmokėta</th>
+            <th>Kliento ID</th>
+            <th>Staliuko numeris</th>
+            <th>Užbaigtas</th>
+            <th>Veiksmai</th>
         </tr>
     </thead>
     <tbody>
@@ -28,12 +28,12 @@
                 <td>@visit.apsilankymo_id</td>
                 <td>@visit.data.ToString("yyyy-MM-dd HH:mm")</td>
                 <td>@visit.zmoniu_skaicius</td>
-                <td>@(visit.apmoketas ? "Yes" : "No")</td>
+                <td>@(visit.apmoketas ? "Taip" : "Ne")</td>
                 <td>@visit.naudotojo_id</td>
                 <td>@visit.staliuko_nr</td>
-                <td>@(visit.uzbaigtas ? "Yes" : "No")</td>
+                <td>@(visit.uzbaigtas ? "Taip" : "Ne")</td>
                 <td>
-                    @Html.ActionLink("Details", "VisitDetails", new { id = visit.apsilankymo_id }, new { @class = "btn btn-info" })
+                    @Html.ActionLink("Valdymas", "VisitDetails", new { id = visit.apsilankymo_id }, new { @class = "btn btn-info" })
                     <button class="btn btn-warning" onclick="location.href='@Url.Action("CancelVisitConfirmation", "Waiter", new { id = visit.apsilankymo_id })'">Cancel</button>
                 </td>
             </tr>

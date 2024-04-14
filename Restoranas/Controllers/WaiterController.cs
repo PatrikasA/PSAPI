@@ -23,7 +23,7 @@ namespace Restoranas.Controllers
             using (var conn = new NpgsqlConnection(connString))
             {
                 conn.Open();
-                var query = "SELECT * FROM apsilankymas WHERE uzbaigtas = false";
+                var query = "SELECT * FROM apsilankymas WHERE uzbaigtas = false OR apmoketas = false";
                 using (var cmd = new NpgsqlCommand(query, conn))
                 {
                     using (var reader = cmd.ExecuteReader())
@@ -120,6 +120,26 @@ namespace Restoranas.Controllers
             ViewBag.VisitId = id;
             return View(orderItems);
         }
+
+        [HttpPost]
+        public IActionResult SubmitCheque(int id)
+        {
+            using (var conn = new NpgsqlConnection(connString))
+            {
+                conn.Open();
+                var query = "UPDATE apsilankymas SET uzbaigtas = true WHERE apsilankymo_id = @VisitId";
+
+                using (var cmd = new NpgsqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@VisitId", id);
+                    int affectedRows = cmd.ExecuteNonQuery();
+                    //gal kazkada error message idet
+                }
+            }
+
+            return RedirectToAction("VisitDetails", new { id = id });
+        }
+
 
     }
 }

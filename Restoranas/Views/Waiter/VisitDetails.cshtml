@@ -1,12 +1,13 @@
 ﻿@{
-    ViewData["Title"] = "Visit Details";
+    ViewData["Title"] = "Vizito valdymas";
     int visitId = ViewBag.VisitId;
 }
 
-<h2>Visit Details</h2>
+<h2>Vizito valdymas</h2>
 
 <div class="buttons">
     <a href="@Url.Action("EnterClientOrder", "Waiter", new { id = visitId })" class="btn btn-primary">Įvesti kliento užsakymą</a>
     <a href="@Url.Action("ModifyClientOrder", "Waiter", new { id = visitId })" class="btn btn-secondary">Redaguoti užsakymą</a>
     <a href="@Url.Action("ClientOrderCheque", "Waiter", new { id = visitId })" class="btn btn-success">Pateikti sąskaitą</a>
+    <a href="@Url.Action("VisitsPageWaiter", "Waiter")" class="btn btn-info">Atgal</a>
 </div>
