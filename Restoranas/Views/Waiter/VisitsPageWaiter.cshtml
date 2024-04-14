@@ -1,0 +1,19 @@
+﻿@model List<Restoranas.Models.Visit>
+
+@{
+    ViewData["Title"] = "Active Visits";
+}
+
+<h2>Active Visits</h2>
+
+<a href="@Url.Action("CreateVisit", "Waiter")" class="btn btn-primary">Sukurti Apsilankymą</a>
+
+<ul>
+    @foreach (var visit in Model)
+    {
+        <li>
+            @Html.ActionLink("Visit Details", "VisitDetails", new { id = visit.apsilankymo_id })
+            <button onclick="location.href='@Url.Action("CancelVisitConfirmation", "Waiter", new { id = visit.apsilankymo_id })'">Cancel</button>
+        </li>
+    }
+</ul>
