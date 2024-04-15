@@ -1,9 +1,9 @@
 # Binaries for projects
-bin/
-obj/
-out/
+Restoranas/bin/
+Restoranas/obj/
+Restoranas/out/
 
 # VS Code directories
-.vscode/
-.vs/
-.idea/
+Restoranas/.vscode/
+Restoranas/.vs/
+Restoranas/.idea/
