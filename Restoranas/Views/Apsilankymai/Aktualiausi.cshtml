@@ -57,28 +57,36 @@
 
     <div class="row">
         <div class="col-12 col-md-8 offset-md-2">
-            <button class="btn btn-outline-dark btn-block">Kurti naują rezervaciją</button>
+            <a class="btn btn-outline-dark btn-block"
+               asp-area="" asp-controller="Apsilankymai" asp-action="OpenVisitCreation">Kurti naują rezervaciją</a>
         </div>
     </div>
 
-    <div class="skiltis p-3">
-        <div>
-            <p><strong>Kovo 11, Pirmadienis, 16:45</strong></p>
-            <p><strong>Žmonių kiekis:</strong> 4</p>
-            <p><strong>Staliuko Nr:</strong> 16</p>
 
-            <div class="row">
-                <div class="col-12 col-md-8 offset-md-2">
-                    <button class="btn btn-outline-dark btn-block">Išsirinkti patiekalus</button>
+    @if (ViewData["FutureVisits"] != null)
+    {
+        foreach (var futureVisit in ViewData["FutureVisits"] as List<Visit>)
+        {
+            <div class="skiltis p-3">
+                <div>
+                    <p><strong>@futureVisit.data.ToString("MMM d, dddd, HH:mm")</strong></p>
+                    <p><strong>Žmonių kiekis:</strong> @futureVisit.zmoniu_skaicius</p>
+                    <p><strong>Staliuko Nr:</strong> @futureVisit.staliuko_nr</p>
+
+                    <div class="row">
+                        <div class="col-12 col-md-8 offset-md-2">
+                            <button class="btn btn-outline-dark btn-block">Išsirinkti patiekalus</button>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-12 col-md-8 offset-md-2">
+                            <button class="btn btn-outline-dark btn-block">Atšaukti rezervaciją</button>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <br />
-            <div class="row">
-                <div class="col-12 col-md-8 offset-md-2">
-                    <button class="btn btn-outline-dark btn-block">Atšaukti rezervaciją</button>
-                </div>
-            </div>
-        </div>
-    </div>
+        }
+    }
 
 </div>
