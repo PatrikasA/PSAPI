@@ -376,9 +376,7 @@ namespace Restoranas.Controllers
                     int result = cmd.ExecuteNonQuery();
                     if (result == 0)
                     {
-                        // Handle the case where no rows were deleted
-                        // This could be due to no matching record found
-                        TempData["Error"] = "No item was removed. Item may have already been deleted or does not exist.";
+                        TempData["Error"] = "Įvyko klaida";
                     }
                 }
             }

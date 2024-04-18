@@ -1,9 +1,12 @@
 ﻿@model List<Restoranas.Models.OrderItem>
 @{
-    ViewData["Title"] = "Modify Client Order";
+    ViewData["Title"] = "Keisti kliento užsakymą";
     int visitId = (int)ViewBag.VisitId;
 }
-<form method="post">
+
+<h2>Keisti užsakymą vizitui nr. @visitId</h2>
+
+<form method="post" asp-action="UpdateOrderItem">
     <table class="table">
         <thead>
             <tr>
@@ -22,8 +25,8 @@
                         <input type="hidden" name="orderId" value="@item.OrderId" />
                     </td>
                     <td>
-                        <button type="submit" formaction="@Url.Action("UpdateOrderItem", "Waiter", new { id = visitId, uzsakymoId = item.OrderId })" class="btn btn-primary">Update</button>
-                        <button type="submit" formaction="@Url.Action("RemoveOrderItem", "Waiter", new { id = visitId, uzsakymoId = item.OrderId })" class="btn btn-danger">Remove</button>
+                        <button type="submit" formaction="@Url.Action("UpdateOrderItem", "Waiter", new { id = visitId, uzsakymoId = item.OrderId })" class="btn btn-primary">Atnaujinti</button>
+                        <button type="submit" formaction="@Url.Action("RemoveOrderItem", "Waiter", new { id = visitId, uzsakymoId = item.OrderId })" class="btn btn-danger">Pašalinti</button>
                     </td>
                 </tr>
             }
@@ -31,3 +34,4 @@
     </table>
 </form>
 
+<a href="@Url.Action("VisitDetails", "Waiter", new { id = visitId })" class="btn btn-secondary">Atgal į apsilankymo valdymą</a>

@@ -1,7 +1,7 @@
 ﻿@model List<Restoranas.Models.Visit>
 
 @{
-    ViewData["Title"] = "Active Visits";
+    ViewData["Title"] = "Dabartiniai vizitai";
 }
 
 <h2>Active Visits</h2>
@@ -34,7 +34,7 @@
                 <td>@(visit.uzbaigtas ? "Taip" : "Ne")</td>
                 <td>
                     @Html.ActionLink("Valdymas", "VisitDetails", new { id = visit.apsilankymo_id }, new { @class = "btn btn-info" })
-                    <button class="btn btn-warning" onclick="location.href='@Url.Action("CancelVisitConfirmation", "Waiter", new { id = visit.apsilankymo_id })'">Cancel</button>
+                    <button class="btn btn-warning" onclick="location.href='@Url.Action("CancelVisitConfirmation", "Waiter", new { id = visit.apsilankymo_id })'">Atšaukti vizitą</button>
                 </td>
             </tr>
         }
