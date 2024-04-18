@@ -14,14 +14,14 @@ namespace Restoranas.Controllers
         [HttpGet]
         public IActionResult CreateProduct()
         {
-            Patiekalas naujasPatiekalas = new Patiekalas(); // Sukurkite naują Patiekalas objektą
+            Item naujasPatiekalas = new Item(); // Sukurkite naują Item objektą
             return View(naujasPatiekalas);
         }
 
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult CreateProduct(Patiekalas productModel)
+        public IActionResult CreateProduct(Item productModel)
         {
             if (ModelState.IsValid)
             {
@@ -57,7 +57,7 @@ namespace Restoranas.Controllers
         }
         public ActionResult Index()
         {
-            List<Patiekalas> patiekalai = new List<Patiekalas>();
+            List<Item> patiekalai = new List<Item>();
 
             // Connection string
             string connString = "Host=ep-solitary-forest-a28gt5ec-pooler.eu-central-1.aws.neon.tech;Port=5432;Database=psapi_faxai;Username=psapi_faxai_owner;Password=g3xbiOmuETp7;";
@@ -70,7 +70,7 @@ namespace Restoranas.Controllers
                     // Open connection
                     conn.Open();
 
-                    // Query to select all rows from the "Patiekalas" table
+                    // Query to select all rows from the "Item" table
                     string query = "SELECT * FROM patiekalas";
 
                     // Create a command to execute the query
@@ -88,8 +88,8 @@ namespace Restoranas.Controllers
                                 double kaina = reader.GetDouble(2);
                                 bool parduodamas = reader.GetBoolean(3);
 
-                                // Create Patiekalas object and add it to the list
-                                patiekalai.Add(new Patiekalas { patiekalo_Id = patiekaloId, pavadinimas = pavadinimas, kaina = kaina, parduodamas = parduodamas });
+                                // Create Item object and add it to the list
+                                patiekalai.Add(new Item { patiekalo_Id = patiekaloId, pavadinimas = pavadinimas, kaina = kaina, parduodamas = parduodamas });
                             }
                         }
                     }

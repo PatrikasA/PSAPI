@@ -1,7 +1,33 @@
 ﻿@{
     ViewData["Title"] = "Įvesti kliento užsakymą";
-    int visitId = ViewBag.VisitId;
+    int visitId = (int)ViewBag.VisitId;
 }
 
-<h2>Įvesti kliento užsakymą</h2>
-<p>Vizito nr: @visitId</p>
+<h2>Įveskite kliento užakymą vizitui nr. @visitId</h2>
+
+<h3>Į užsakymą įtraukti patiekalai</h3>
+<ul>
+    @foreach (var item in ViewBag.OrderedItems)
+    {
+        <li>@item.Name - Kiekis: @item.Count</li>
+    }
+</ul>
+
+<h3>Pridėti patiekalą</h3>
+<form asp-action="EnterClientOrder" method="post">
+    <input type="hidden" name="id" value="@visitId" />
+    <div class="form-group">
+        <label for="patiekaloId">Patiekalas</label>
+        <select name="patiekaloId" class="form-control">
+            @foreach (var item in ViewBag.MenuItems)
+            {
+                <option value="@item.Value">@item.Text</option>
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="quantity">Kiekis</label>
+        <input type="number" name="quantity" class="form-control" min="1" />
+    </div>
+    <button type="submit" class="btn btn-primary">Pridėti</button>
+</form>

@@ -104,7 +104,7 @@ namespace Restoranas.Controllers
                     // Open connection
                     conn.Open();
 
-                    // Query to select all rows from the "Patiekalas" table
+                    // Query to select all rows from the "Item" table
                     string query = "SELECT * FROM staliukas WHERE staliuko_nr=@stalnr";
 
                     // Create a command to execute the query
@@ -122,7 +122,7 @@ namespace Restoranas.Controllers
                                 int staliuko_nr = reader.GetInt32(0);
                                 int vietos = reader.GetInt32(1);
 
-                                // Create Patiekalas object and add it to the list
+                                // Create Item object and add it to the list
                                 staliukas = (new TableInfo { TableNumber = staliuko_nr, Capacity = vietos });
                             }
                         }
@@ -193,7 +193,7 @@ namespace Restoranas.Controllers
                     // Open connection
                     conn.Open();
 
-                    // Query to select all rows from the "Patiekalas" table
+                    // Query to select all rows from the "Item" table
                     string query = "SELECT * FROM staliukas";
 
                     // Create a command to execute the query
@@ -209,7 +209,7 @@ namespace Restoranas.Controllers
                                 int staliuko_nr = reader.GetInt32(0);
                                 int vietos = reader.GetInt32(1);
 
-                                // Create Patiekalas object and add it to the list
+                                // Create Item object and add it to the list
                                 staliukai.Add(new TableInfo { TableNumber = staliuko_nr, Capacity = vietos});
                             }
                         }

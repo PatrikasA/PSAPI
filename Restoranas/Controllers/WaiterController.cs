@@ -62,12 +62,6 @@ namespace Restoranas.Controllers
             return View();
         }
 
-        [HttpGet]
-        public IActionResult EnterClientOrder(int id)
-        {
-            ViewBag.VisitId = id;
-            return View();
-        }
 
         [HttpGet]
         public IActionResult ModifyClientOrder(int id)
@@ -208,6 +202,101 @@ namespace Restoranas.Controllers
             }
             return View(visit);
         }
+
+        [HttpGet]
+        public IActionResult EnterClientOrder(int id)
+        {
+            ViewBag.VisitId = id;
+            ViewBag.MenuItems = GetMenuItems();
+            ViewBag.OrderedItems = GetOrderedItems(id);
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult EnterClientOrder(int id, int patiekaloId, int quantity)
+        {
+            if (quantity > 0)
+            {
+                using (var conn = new NpgsqlConnection(connString))
+                {
+                    conn.Open();
+                    var query = @"
+                        INSERT INTO uzsakytas_patiekalas (kiekis, patiekalo_id, apsilankymo_id)
+                        VALUES (@Quantity, @PatiekaloId, @ApsilankymoId)";
+                    using (var cmd = new NpgsqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@Quantity", quantity);
+                        cmd.Parameters.AddWithValue("@PatiekaloId", patiekaloId);
+                        cmd.Parameters.AddWithValue("@ApsilankymoId", id);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            return RedirectToAction("EnterClientOrder", new { id = id });
+        }
+
+        public List<SelectListItem> GetMenuItems()
+        {
+            var items = new List<SelectListItem>();
+            using (var conn = new NpgsqlConnection(connString))
+            {
+                conn.Open();
+                var query = "SELECT patiekalo_id, pavadinimas, kaina FROM patiekalas WHERE parduodamas = true";
+                using (var cmd = new NpgsqlCommand(query, conn))
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var item = new Item
+                        {
+                            patiekalo_Id = reader.GetInt32(reader.GetOrdinal("patiekalo_id")),
+                            pavadinimas = reader.GetString(reader.GetOrdinal("pavadinimas")),
+                            kaina = reader.GetDouble(reader.GetOrdinal("kaina")),
+                            parduodamas = true
+                        };
+                        items.Add(new SelectListItem
+                        {
+                            Value = item.patiekalo_Id.ToString(),
+                            Text = $"{item.pavadinimas} - ${item.kaina:F2}"
+                        });
+                    }
+                }
+            }
+            return items;
+        }
+
+        public List<OrderItem> GetOrderedItems(int visitId)
+        {
+            var orderedItems = new List<OrderItem>();
+            using (var conn = new NpgsqlConnection(connString))
+            {
+                conn.Open();
+                var query = @"
+            SELECT p.pavadinimas, up.kiekis, p.kaina
+            FROM uzsakytas_patiekalas up
+            JOIN patiekalas p ON p.patiekalo_id = up.patiekalo_id
+            WHERE up.apsilankymo_id = @VisitId AND p.parduodamas = true";
+                using (var cmd = new NpgsqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@VisitId", visitId);
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            orderedItems.Add(new OrderItem
+                            {
+                                Name = reader.GetString(reader.GetOrdinal("pavadinimas")),
+                                Count = reader.GetInt32(reader.GetOrdinal("kiekis")),
+                                Price = reader.GetDouble(reader.GetOrdinal("kaina"))
+                            });
+                        }
+                    }
+                }
+            }
+            return orderedItems;
+        }
+
 
     }
 }

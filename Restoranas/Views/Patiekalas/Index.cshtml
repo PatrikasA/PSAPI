@@ -1,4 +1,4 @@
-﻿@model List<Restoranas.Models.Patiekalas>
+﻿@model List<Restoranas.Models.Item>
 @{
     ViewData["Title"] = "Meniu";
 }
@@ -28,7 +28,7 @@
         <p class="center">Restorano patiekalai</p>
     </div>
 
-    @foreach (Restoranas.Models.Patiekalas patiekalas in Model)
+    @foreach (Restoranas.Models.Item patiekalas in Model)
     {
         if (patiekalas.parduodamas)
         {

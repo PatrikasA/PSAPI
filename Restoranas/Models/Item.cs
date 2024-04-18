@@ -1,6 +1,6 @@
 ﻿namespace Restoranas.Models
 {
-    public class Patiekalas
+    public class Item
     {
         public int patiekalo_Id { get; set; }
         public string pavadinimas { get; set; }
