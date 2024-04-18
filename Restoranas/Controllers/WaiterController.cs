@@ -67,8 +67,43 @@ namespace Restoranas.Controllers
         public IActionResult ModifyClientOrder(int id)
         {
             ViewBag.VisitId = id;
-            return View();
+            var orderedItems = GetOrderedItemsWithIds(id);
+            return View(orderedItems);
         }
+
+        public List<OrderItem> GetOrderedItemsWithIds(int visitId)
+        {
+            var orderedItems = new List<OrderItem>();
+            using (var conn = new NpgsqlConnection(connString))
+            {
+                conn.Open();
+                var query = @"
+            SELECT up.uzsakymo_id, p.pavadinimas, up.kiekis, p.kaina
+            FROM uzsakytas_patiekalas up
+            JOIN patiekalas p ON p.patiekalo_id = up.patiekalo_id
+            WHERE up.apsilankymo_id = @VisitId AND p.parduodamas = true";
+                using (var cmd = new NpgsqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@VisitId", visitId);
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            orderedItems.Add(new OrderItem
+                            {
+                                OrderId = reader.GetInt32(reader.GetOrdinal("uzsakymo_id")),
+                                Name = reader.GetString(reader.GetOrdinal("pavadinimas")),
+                                Count = reader.GetInt32(reader.GetOrdinal("kiekis")),
+                                Price = reader.GetDouble(reader.GetOrdinal("kaina"))
+                            });
+                        }
+                    }
+                }
+            }
+            return orderedItems;
+        }
+
+
 
 
         [HttpGet]
@@ -296,6 +331,60 @@ namespace Restoranas.Controllers
             }
             return orderedItems;
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult UpdateOrderItem(int id, int uzsakymoId, int newQuantity)
+        {
+            if (newQuantity > 0)
+            {
+                using (var conn = new NpgsqlConnection(connString))
+                {
+                    conn.Open();
+                    var query = @"UPDATE uzsakytas_patiekalas SET kiekis = @Quantity
+                          WHERE uzsakymo_id = @UzsakymoId AND apsilankymo_id = @ApsilankymoId";
+                    using (var cmd = new NpgsqlCommand(query, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@Quantity", newQuantity);
+                        cmd.Parameters.AddWithValue("@UzsakymoId", uzsakymoId);
+                        cmd.Parameters.AddWithValue("@ApsilankymoId", id);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            else
+            {
+                // If the quantity is zero or less, perform deletion
+                return RemoveOrderItem(id, uzsakymoId);
+            }
+            return RedirectToAction("ModifyClientOrder", new { id = id });
+        }
+
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult RemoveOrderItem(int id, int uzsakymoId)
+        {
+            using (var conn = new NpgsqlConnection(connString))
+            {
+                conn.Open();
+                var query = "DELETE FROM uzsakytas_patiekalas WHERE uzsakymo_id = @UzsakymoId";
+                using (var cmd = new NpgsqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@UzsakymoId", uzsakymoId);
+                    int result = cmd.ExecuteNonQuery();
+                    if (result == 0)
+                    {
+                        // Handle the case where no rows were deleted
+                        // This could be due to no matching record found
+                        TempData["Error"] = "No item was removed. Item may have already been deleted or does not exist.";
+                    }
+                }
+            }
+            return RedirectToAction("ModifyClientOrder", new { id = id });
+        }
+
 
 
     }

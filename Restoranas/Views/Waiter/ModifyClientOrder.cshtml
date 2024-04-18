@@ -1,7 +1,33 @@
-﻿@{
-    ViewData["Title"] = "Keisti kliento užsakymą";
-    int visitId = ViewBag.VisitId;
+﻿@model List<Restoranas.Models.OrderItem>
+@{
+    ViewData["Title"] = "Modify Client Order";
+    int visitId = (int)ViewBag.VisitId;
 }
+<form method="post">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Pavadinimas</th>
+                <th>Kiekis</th>
+                <th>Veiksmai</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>
+                        <input type="number" name="newQuantity" value="@item.Count" min="0" />
+                        <input type="hidden" name="orderId" value="@item.OrderId" />
+                    </td>
+                    <td>
+                        <button type="submit" formaction="@Url.Action("UpdateOrderItem", "Waiter", new { id = visitId, uzsakymoId = item.OrderId })" class="btn btn-primary">Update</button>
+                        <button type="submit" formaction="@Url.Action("RemoveOrderItem", "Waiter", new { id = visitId, uzsakymoId = item.OrderId })" class="btn btn-danger">Remove</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</form>
 
-<h2>Keisti kliento užsakymą</h2>
-<p>Visit ID: @visitId</p>
