@@ -1,9 +1,46 @@
-﻿@{
-    ViewData["Title"] = "Vizito kūrimas";
+﻿@model Restoranas.Models.Visit
+
+@{
+    ViewData["Title"] = "Sukurti vizitą";
 }
 
-<h2>Sukurti naują vizitą</h2>
+<h2>Create New Visit</h2>
 
-<form method="post" action="@Url.Action("CreateVisit", "Waiter")">
-    <button type="submit">Sukurti</button>
+<form asp-action="CreateVisit" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-group">
+        <label asp-for="data" class="control-label">Data</label>
+        <input asp-for="data" class="form-control" type="datetime-local" value="@Model.data.ToString("yyyy-MM-ddTHH:mm")" />
+        <span asp-validation-for="data" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="zmoniu_skaicius" class="control-label">Žmonių skaičius</label>
+        <input asp-for="zmoniu_skaicius" class="form-control" />
+        <span asp-validation-for="zmoniu_skaicius" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="naudotojo_id" class="control-label">Naudotojo ID</label>
+        <input asp-for="naudotojo_id" class="form-control" />
+        <span asp-validation-for="naudotojo_id" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="staliuko_nr" class="control-label">Staliuko numeris</label>
+        <select asp-for="staliuko_nr" asp-items="ViewBag.TableNumbers" class="form-control"></select>
+        <span asp-validation-for="staliuko_nr" class="text-danger"></span>
+    </div>
+
+    <input asp-for="apmoketas" type="hidden" />
+    <input asp-for="uzbaigtas" type="hidden" />
+
+    <button type="submit" class="btn btn-primary">Sukurti</button>
 </form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

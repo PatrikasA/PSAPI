@@ -14,8 +14,8 @@ namespace Restoranas.Models
         [Range(1, 20, ErrorMessage = "Zmoniu skaicius must be between 1 and 20")]
         public int zmoniu_skaicius { get; set; }
         public bool apmoketas { get; set; }
-        public int naudotojo_id { get; set; }
-        public int staliuko_nr { get; set; }
+        public int? naudotojo_id { get; set; }
+        public int staliuko_nr { get; set; }    
         public bool uzbaigtas { get; set; }
     }
 }
