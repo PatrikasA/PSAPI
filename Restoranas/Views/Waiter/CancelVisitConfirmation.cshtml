@@ -1,9 +1,11 @@
 ﻿@{
     ViewData["Title"] = "Atšaukimo patvirtinimas";
+    int visitId = ViewBag.VisitId;
 }
 
 <h2>Ar tikrai norite atšaukti vizitą?</h2>
 
-<form method="post" action="@Url.Action("CancelVisit", "Waiter", new { id = ViewBag.VisitId })">
-    <button type="submit">Taip, atšaukti</button>
+<form method="post" asp-action="CancelVisit" asp-route-id="@visitId">
+    <button type="submit" class="btn btn-danger">Taip, atšaukti</button>
+    <a href="@Url.Action("VisitsPageWaiter", "Waiter")" class="btn btn-secondary">Ne, grįžti atgal</a>
 </form>

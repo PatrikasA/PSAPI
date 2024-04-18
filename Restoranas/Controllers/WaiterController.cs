@@ -55,6 +55,7 @@ namespace Restoranas.Controllers
             return View();
         }
 
+
         [HttpGet]
         public IActionResult VisitDetails(int id)
         {
@@ -354,7 +355,6 @@ namespace Restoranas.Controllers
             }
             else
             {
-                // If the quantity is zero or less, perform deletion
                 return RemoveOrderItem(id, uzsakymoId);
             }
             return RedirectToAction("ModifyClientOrder", new { id = id });
@@ -383,6 +383,26 @@ namespace Restoranas.Controllers
                 }
             }
             return RedirectToAction("ModifyClientOrder", new { id = id });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult CancelVisit(int id)
+        {
+            using (var conn = new NpgsqlConnection(connString))
+            {
+                conn.Open();
+                var query = @"
+            UPDATE apsilankymas 
+            SET apmoketas = true, uzbaigtas = true
+            WHERE apsilankymo_id = @VisitId";
+                using (var cmd = new NpgsqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@VisitId", id);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            return RedirectToAction("VisitsPageWaiter");
         }
 
 
