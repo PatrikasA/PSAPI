@@ -1,6 +1,9 @@
-﻿@{
+﻿@model List<Restoranas.Models.Visit>
+
+@{
     ViewData["Title"] = "Praeje";
 }
+
 <div class="phone">
     <div class="row mb-3">
         <div class="col">
@@ -23,37 +26,32 @@
         </div>
     </div>
 
-
     <div class="skiltiespavadinimas">
         <p class="center">Praėję apsilankymai</p>
     </div>
 
-    <div class="skiltis p-3">
-        <div>
-            <p><strong>Kovo 2, Šeštadienis, 14:45</strong></p>
-            <p><strong>Žmonių kiekis:</strong> 2</p>
-            <p><strong>Staliuko Nr:</strong> 15</p>
-            <p><strong>Užsakyti patiekalai:</strong></p>
-            <p>Vištienos kepsnys su sūriu, 6.79€</p>
-            <p>Burokėlių sriuba, 3.99€</p>
-            <div class="row">
-                <div class="col-12 col-md-8 offset-md-2">
-                    <button class="btn btn-outline-dark btn-block">Apmokėti sąskaitą</button>
-                </div>
+    @foreach (var apsilankymas in Model)
+    {
+        <div class="skiltis p-3">
+            <div>
+                <p><strong>@apsilankymas.data.ToString("MMMM d, dddd")</strong></p>
+                <p><strong>Žmonių kiekis:</strong> @apsilankymas.zmoniu_skaicius</p>
+                <p><strong>Staliuko Nr:</strong> @apsilankymas.staliuko_nr</p>
+                <p><strong>Suma:</strong> @apsilankymas.naudotojo_id</p>
+
+                @if (!apsilankymas.apmoketas)
+                {
+                    <div class="row">
+                        <div class="col-12 col-md-8 offset-md-2">
+                            <a href="@Url.Action("ApmoketiUzsakyma", "Apsilankymai", new { apsilankymoId = apsilankymas.apsilankymo_id })" class="btn btn-outline-dark btn-block">Apmokėti sąskaitą</a>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <p><strong>Apmokėta</strong></p>
+                }
             </div>
         </div>
-    </div>
-
-    <div class="skiltis p-3">
-        <div>
-            <p><strong>Kovo 1, Penktadienis, 12:30</strong></p>
-            <p><strong>Žmonių kiekis:</strong> 1</p>
-            <p><strong>Staliuko Nr:</strong> 5</p>
-            <p><strong>Užsakyti patiekalai:</strong></p>
-            <p>Vištienos kepsnys su sūriu, 6.79€</p>
-            <p>Varškinis pieno kokteilis, 4.99€</p>
-            <p><strong>Apmokėta</strong></p>
-        </div>
-    </div>
-
+    }
 </div>

@@ -3,6 +3,19 @@ using Npgsql;
 using Restoranas.Models;
 using System.ComponentModel;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
+using Npgsql;
+using Restoranas.Models;
+//using Stripe;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
+using System.Text;
+using System.Net.Http;
+using System.Reflection;
 
 namespace Restoranas.Controllers
 {
@@ -10,11 +23,13 @@ namespace Restoranas.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly string connString = "Host=ep-solitary-forest-a28gt5ec-pooler.eu-central-1.aws.neon.tech;Port=5432;Database=psapi_faxai;Username=psapi_faxai_owner;Password=g3xbiOmuETp7;";
-
+        private readonly IHttpClientFactory _httpClientFactory;
 
         public ApsilankymaiController(ILogger<HomeController> logger)
         {
             _logger = logger;
+           // _httpClientFactory = httpClientFactory;
+
         }
 
         // Rezervuoti staliuka | Make a reservation
@@ -243,9 +258,152 @@ namespace Restoranas.Controllers
         {
             return View();
         }
-        public IActionResult Praeje()
+        public async Task<IActionResult> Praeje()
         {
-            return View();
+            List<Visit> visits = new List<Visit>();
+
+            string query = "SELECT * FROM apsilankymas WHERE data < CURRENT_DATE ORDER BY data";
+
+            using (var conn = new NpgsqlConnection(connString))
+            {
+                await conn.OpenAsync();
+
+                using (var cmd = new NpgsqlCommand(query, conn))
+                {
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            visits.Add(new Visit
+                            {
+                                apsilankymo_id = reader.GetInt32(reader.GetOrdinal("apsilankymo_id")),
+                                data = reader.GetDateTime(reader.GetOrdinal("data")),
+                                zmoniu_skaicius = reader.GetInt32(reader.GetOrdinal("zmoniu_skaicius")),
+                                apmoketas = reader.GetBoolean(reader.GetOrdinal("apmoketas")),
+                                naudotojo_id = 7,
+                                staliuko_nr = reader.GetInt32(reader.GetOrdinal("staliuko_nr")),
+                                uzbaigtas = reader.GetBoolean(reader.GetOrdinal("uzbaigtas"))
+                            });
+                        }
+                    }
+                }
+            }
+
+            return View(visits);
+        }
+
+
+        public async Task<IActionResult> ApmoketiUzsakyma(int apsilankymoId)
+        {
+            /*var apsilankymas = await GetUzsakymasFromDatabaseOrOtherSource(apsilankymoId);
+
+            if (apsilankymas == null)
+            {
+                return NotFound(); // Jei užsakymas nerastas, grąžinti 404 klaidą
+            }*/
+            var response = true;
+            if (response)
+            {
+                // Gaukite mokėjimo nuorodą iš atsakymo turinio ir nukreipkite vartotoją į PayPal Sandbox
+
+                UpdateUzsakymasInDatabaseOrOtherSource(apsilankymoId);
+
+                return RedirectToAction("Praeje", "Apsilankymai");
+            }
+            else
+            {
+                // Nepavyko sukurti mokėjimo, grąžinti klaidos pranešimą
+                return BadRequest("nepavyko atlikti mokėjimo");
+            }
+            // PayPal Sandbox API URL ir kiti duomenys
+            string   payPalApiUrl = "https://api.sandbox.paypal.com";
+            string clientId = "YourPayPalSandboxClientId";
+            string clientSecret = "YourPayPalSandboxClientSecret";
+
+            // Sukurkite HttpClient, naudodami IHttpClientFactory
+
+            double suma = 15.99;
+            // Sukurkite mokėjimo užklausos turinį
+            var paymentRequest = new
+            {
+                intent = "sale",
+                payer = new { payment_method = "paypal" },
+                transactions = new[]
+                {
+                    new
+                    {
+                        amount = new { total = suma.ToString(), currency = "USD" },
+                        description = "Apsilankymo apmokėjimas"
+                    }
+                },
+                redirect_urls = new
+                {
+                    return_url = "http://yourwebsite.com/payment/success", // Nurodykite savo puslapio sėkmingo mokėjimo URL
+                    cancel_url = "http://yourwebsite.com/payment/cancel"  // Nurodykite savo puslapio atšaukto mokėjimo URL
+                }
+            };
+            var client = _httpClientFactory.CreateClient();
+
+            // Nustatykite autorizacijos antraštę
+            var byteArray = Encoding.ASCII.GetBytes($"{clientId}:{clientSecret}");
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
+
+            // Pateikite mokėjimo užklausą į PayPal Sandbox API
+            var content = new StringContent(JsonConvert.SerializeObject(paymentRequest), Encoding.UTF8, "application/json");
+           // var response = await client.PostAsync($"{payPalApiUrl}/v1/payments/payment", content);
+
+            return NotFound();
+        }
+
+
+
+        private async Task<Visit> GetUzsakymasFromDatabaseOrOtherSource(int apsilankymoId)
+        {
+
+            using (var conn = new NpgsqlConnection(connString))
+            {
+                await conn.OpenAsync();
+                string query = "SELECT * FROM apsilankymas WHERE apsilankymo_id = @apsilankymo_id";
+
+                using (var cmd = new NpgsqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@apsilankymo_id", apsilankymoId);
+
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                            
+                        return new Visit
+                            {
+                                apsilankymo_id =apsilankymoId,
+                                data = reader.GetDateTime(reader.GetOrdinal("data")),
+                                zmoniu_skaicius = reader.GetInt32(reader.GetOrdinal("zmoniu_skaicius")),
+                                apmoketas = reader.GetBoolean(reader.GetOrdinal("apmoketas")),
+                                naudotojo_id = 7,
+                                staliuko_nr = reader.GetInt32(reader.GetOrdinal("staliuko_nr")),
+                                uzbaigtas = reader.GetBoolean(reader.GetOrdinal("uzbaigtas"))
+                            };
+                        
+                    }
+                }
+            }
+
+        }
+
+        private async Task UpdateUzsakymasInDatabaseOrOtherSource(int uzsakymas_id)
+        {
+            string updateQuery = "UPDATE apsilankymas SET apmoketas = true WHERE apsilankymo_id = @apsilankymoId";
+
+            using (var conn = new NpgsqlConnection(connString))
+            {
+                await conn.OpenAsync();
+
+                using (var cmd = new NpgsqlCommand(updateQuery, conn))
+                {
+                    cmd.Parameters.AddWithValue("@apsilankymoId", uzsakymas_id);
+
+                    await cmd.ExecuteNonQueryAsync();
+                }
+            }
         }
 
     }
