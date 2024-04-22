@@ -6,7 +6,15 @@
     <div class="row mb-3">
         <div class="col">
             <h1 class="center">Klientas | Jonas Jonaitis</h1>
+            <h2 class="center">Rezervuoti staliuką</h2>
         </div>
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger" role="alert">
+                @TempData["ErrorMessage"]
+            </div>
+        }
 
         <form method="post" asp-action="CreateVisit" class="needs-validation" novalidate>
             <div class="form-group">

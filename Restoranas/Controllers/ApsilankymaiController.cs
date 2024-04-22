@@ -44,12 +44,37 @@ namespace Restoranas.Controllers
                 return View("VisitCreationForm", visit);
             }
 
-            // Find the optimal table combination
+            //
+            // Check if the user has not already made a reservation for the selected day
+            string checkQuery = "SELECT COUNT(*) FROM apsilankymas WHERE naudotojo_id = @userId AND DATE(data) = DATE(@visitDate)";
+            bool hasReservation;
+            using (var conn = new NpgsqlConnection(connString))
+            {
+                conn.Open();
+                using (var cmd = new NpgsqlCommand(checkQuery, conn))
+                {
+                    cmd.Parameters.AddWithValue("@userId", 6); // Assuming 6 is the user's ID
+                    cmd.Parameters.AddWithValue("@visitDate", visit.data);
+
+                    long count = (long)cmd.ExecuteScalar();
+                    int countInt = (int)count;
+                    hasReservation = countInt > 0;
+                }
+            }
+
+            if (hasReservation)
+            {
+                TempData["ErrorMessage"] = "Jūs jau esate užrezervavę staliuką šią dieną.";
+                return View("VisitCreationForm");
+            }
+
+            // Surasti tinkamą staliukų kombinaciją rezervacijai
             List<int> optimalTables = FindOptimalTableCombination(visit);
 
             // If no optimal tables found
             if (optimalTables.Count == 0)
             {
+                TempData["ErrorMessage"] = "Laisvų staliukų, kurie tenktintų jūsų pasirinktą žmonių skaičių pasirinktu laiku nėra.";
                 return View("VisitCreationForm");
             }
 
@@ -77,9 +102,12 @@ namespace Restoranas.Controllers
                 }
             }
 
+            return RedirectToAction("ReturnToVisitsPage");
+        }
+        public IActionResult ReturnToVisitsPage()
+        {
             return RedirectToAction("Aktualiausi");
         }
-    
 
         // Returns list of tables that together can fit all of the people needed for the visit
         public List<int> FindOptimalTableCombination(Visit visit)
@@ -208,19 +236,20 @@ namespace Restoranas.Controllers
 
         public IActionResult VisitsPage()
         {
-            return View("Aktualiausi");
+            return RedirectToAction("Aktualiausi");
         }
 
         public async Task<IActionResult> Aktualiausi()
         {
             // Get the latest future visits from the database
-            List<Visit> futureVisits = await GetFutureVisitsAsync();
+            List<Visit> futureVisits = await RefreshVisits();
             ViewData["FutureVisits"] = futureVisits;
 
             return View();
         }
 
-        private async Task<List<Visit>> GetFutureVisitsAsync()
+        // Returns future visits
+        private async Task<List<Visit>> RefreshVisits()
         {
             List<Visit> futureVisits = new List<Visit>();
 
