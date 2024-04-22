@@ -107,5 +107,103 @@ namespace Restoranas.Controllers
             // Grąžinamas peržiūros langas su patiekalų sąrašu
             return View(patiekalai);
         }
+
+
+
+
+        public ActionResult GetMeals(int uzsakymoId)
+        {
+            List<Item> patiekalai = new List<Item>();
+            ViewBag.uzsakymoId = uzsakymoId; 
+            // Connection string
+            string connString = "Host=ep-solitary-forest-a28gt5ec-pooler.eu-central-1.aws.neon.tech;Port=5432;Database=psapi_faxai;Username=psapi_faxai_owner;Password=g3xbiOmuETp7;";
+
+            // Establish connection
+            using (var conn = new NpgsqlConnection(connString))
+            {
+                try
+                {
+                    // Open connection
+                    conn.Open();
+
+                    // Query to select all rows from the "Item" table
+                    string query = "SELECT * FROM patiekalas";
+
+                    // Create a command to execute the query
+                    using (var cmd = new NpgsqlCommand(query, conn))
+                    {
+                        // Execute the query and obtain a reader
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            // Check if there are rows in the result set
+                            while (reader.Read())
+                            {
+                                // Read values from the current row
+                                int patiekaloId = reader.GetInt32(0);
+                                string pavadinimas = reader.GetString(1);
+                                double kaina = reader.GetDouble(2);
+                                bool parduodamas = reader.GetBoolean(3);
+
+                                // Create Item object and add it to the list
+                                patiekalai.Add(new Item { patiekalo_Id = patiekaloId, pavadinimas = pavadinimas, kaina = kaina, parduodamas = parduodamas });
+                            }
+                        }
+                    }
+
+                    // Close connection
+                    conn.Close();
+                }
+                catch (Exception ex)
+                {
+                    // Prisijungimo klaida
+                    ViewBag.ErrorMessage = $"Failed to connect to PostgreSQL: {ex.Message}";
+                }
+            }
+
+            // Grąžinamas peržiūros langas su patiekalų sąrašu
+            return View(patiekalai);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult AddToVisit(int uzsakymoId, int patiekaloId, int kiekis)
+        {
+            try
+            {
+                StringBuilder commandTextBuilder = new StringBuilder();
+                commandTextBuilder.Append("INSERT INTO uzsakytas_patiekalas (uzsakymo_id, kiekis, patiekalo_id, apsilankymo_id) ");
+                commandTextBuilder.AppendFormat("VALUES ({0}, {1}, {2}, 7)",
+                    uzsakymoId, kiekis, patiekaloId );
+
+                string commandText = commandTextBuilder.ToString();
+                bool success = DataSource.UpdateDataSQL(commandText);
+
+                /*                if (success)
+                                {
+                                    return Ok("Patiekalas sėkmingai pridėtas prie užsakymo.");
+                                }
+                                else
+                                {
+                                    return BadRequest("Patiekalo pridėjimas nepavyko dėl duomenų bazės klaidos.");
+                                }*/
+                if (success)
+                {
+                    TempData["SuccessMessage"] = "Patiekalas sėkmingai pridėtas prie užsakymo.";
+                    return RedirectToAction("GetMeals", "Patiekalas", new { uzsakymoId = uzsakymoId });
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Patiekalo pridėjimas nepavyko , nes jis jau pridėtas.";
+                    return RedirectToAction("GetMeals", "Patiekalas", new { uzsakymoId = uzsakymoId });
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Įvyko klaida pridedant patiekalą prie apsilankymo: {ex.Message}");
+            }
+        }
+
     }
 }
+
