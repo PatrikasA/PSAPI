@@ -65,20 +65,20 @@
 
     @if (ViewData["FutureVisits"] != null)
     {
-        @foreach (var visitGroup in (ViewData["FutureVisits"] as List<Visit>).GroupBy(v => new { v.naudotojo_id, v.data }))
+        @foreach (var visitGroup in (ViewData["FutureVisits"] as List<Visit>).GroupBy(v => new { v.naudotojo_id, v.data, v.apsilankymo_id }))
         {
             <div class="skiltis p-3">
                 @{
                     var tableNumbers = string.Join(", ", visitGroup.Select(v => v.staliuko_nr));
                 }
                 <div class="visit-box">
-                    <p><strong>@visitGroup.Key.data.ToString("MMM d, dddd, HH:mm")</strong></p>
+                    <p><strong>@visitGroup.Key.data.ToString("MMM d, dddd")</strong></p>
                     <p><strong>Žmonių kiekis:</strong> @visitGroup.First().zmoniu_skaicius</p>
                     <p><strong>Staliuko Nr:</strong> @tableNumbers</p>
 
                     <div class="row">
                         <div class="col-12 col-md-8 offset-md-2">
-                            <button class="btn btn-outline-dark btn-block" onclick="location.href='@Url.Action("GetMeals", "Patiekalas", new { uzsakymoId = futureVisit.apsilankymo_id })'">Išsirinkti patiekalus (pateikti užsakymą)</button>
+                            <button class="btn btn-outline-dark btn-block" onclick="location.href='@Url.Action("GetMeals", "Patiekalas", new { uzsakymoId = visitGroup.Key.apsilankymo_id })'">Išsirinkti patiekalus (pateikti užsakymą)</button>
                         </div>
                     </div>
                     <br />
