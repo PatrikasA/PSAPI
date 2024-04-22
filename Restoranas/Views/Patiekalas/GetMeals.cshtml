@@ -1,0 +1,65 @@
+﻿@model List<Restoranas.Models.Item>
+@{
+    ViewData["Title"] = "Meniu";
+}
+<div class="phone">
+    <div class="row mb-3">
+        <div class="col">
+            <h1 class="center">Klientas | Jonas Jonaitis</h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-6 col-md-4">
+            <a class="btn btn-outline-dark  btn-block d-flex align-items-center justify-content-center"
+               asp-area="" asp-controller="Apsilankymai" asp-action="Aktualiausi">Aktualiausi apsilankymai</a>
+        </div>
+        <div class="col-6 col-md-4">
+            <a class="btn btn-dark btn-block d-flex align-items-center justify-content-center"
+               asp-area="" asp-controller="Patiekalas" asp-action="Index">Patiekalų Meniu</a>
+        </div>
+        <div class="col-6 col-md-4">
+            <a class="btn btn-outline-dark btn-block d-flex align-items-center justify-content-center"
+               asp-area="" asp-controller="Apsilankymai" asp-action="Praeje">Praėję apsilankymai</a>
+        </div>
+    </div>
+
+    <div class="skiltiespavadinimas">
+        <p class="center">Restorano patiekalai</p>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success" role="alert">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+
+
+    @foreach (Restoranas.Models.Item patiekalas in Model)
+    {
+        if (patiekalas.parduodamas)
+        {
+            <div class="skiltis p-3">
+                <div>
+                    <p>@patiekalas.pavadinimas, @patiekalas.kaina€</p>
+                    <form method="post" asp-controller="Patiekalas" asp-action="AddToVisit">
+                        <input type="hidden" name="patiekaloId" value="@patiekalas.patiekalo_Id" />
+                        <input type="hidden" name="uzsakymoId" value="@ViewBag.uzsakymoId" /> <!-- Naujas paslėptas laukas -->
+                        <label for="kiekis">Kiekis:</label>
+                        <input type="number" id="kiekis" name="kiekis" value="1" min="1" required />
+                        <button type="submit" class="btn btn-outline-dark btn-block">Įtraukti į apsilankymą</button>
+                    </form>
+                </div>
+            </div>
+        }
+    }
+
+</div>
