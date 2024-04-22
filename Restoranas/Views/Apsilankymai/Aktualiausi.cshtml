@@ -65,13 +65,16 @@
 
     @if (ViewData["FutureVisits"] != null)
     {
-        foreach (var futureVisit in ViewData["FutureVisits"] as List<Visit>)
+        @foreach (var visitGroup in (ViewData["FutureVisits"] as List<Visit>).GroupBy(v => new { v.naudotojo_id, v.data }))
         {
             <div class="skiltis p-3">
-                <div>
-                    <p><strong>@futureVisit.data.ToString("MMM d, dddd, HH:mm")</strong></p>
-                    <p><strong>Žmonių kiekis:</strong> @futureVisit.zmoniu_skaicius</p>
-                    <p><strong>Staliuko Nr:</strong> @futureVisit.staliuko_nr</p>
+                @{
+                    var tableNumbers = string.Join(", ", visitGroup.Select(v => v.staliuko_nr));
+                }
+                <div class="visit-box">
+                    <p><strong>@visitGroup.Key.data.ToString("MMM d, dddd, HH:mm")</strong></p>
+                    <p><strong>Žmonių kiekis:</strong> @visitGroup.First().zmoniu_skaicius</p>
+                    <p><strong>Staliuko Nr:</strong> @tableNumbers</p>
 
                     <div class="row">
                         <div class="col-12 col-md-8 offset-md-2">
@@ -88,5 +91,9 @@
             </div>
         }
     }
+
+
+
+
 
 </div>

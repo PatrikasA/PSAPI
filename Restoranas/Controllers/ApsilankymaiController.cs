@@ -209,7 +209,7 @@ namespace Restoranas.Controllers
         {
             List<Visit> futureVisits = new List<Visit>();
 
-            string query = "SELECT * FROM apsilankymas WHERE data > CURRENT_DATE ORDER BY data";
+            string query = "SELECT * FROM apsilankymas WHERE data >= CURRENT_DATE ORDER BY data";
 
             using (var conn = new NpgsqlConnection(connString))
             {

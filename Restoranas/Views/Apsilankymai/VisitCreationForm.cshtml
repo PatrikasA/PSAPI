@@ -10,18 +10,18 @@
 
         <form method="post" asp-action="CreateVisit" class="needs-validation" novalidate>
             <div class="form-group">
-                <label asp-for="zmoniu_skaicius" class="control-label">Number of People</label>
+                <label asp-for="zmoniu_skaicius" class="control-label">Žmonių skaičius</label>
                 <input asp-for="zmoniu_skaicius" class="form-control" required />
                 <span asp-validation-for="zmoniu_skaicius" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                <label asp-for="data" class="control-label">Date and Time</label>
+                <label asp-for="data" class="control-label">Rezervacijus Diena ir laikas</label>
                 <input asp-for="data" class="form-control datetimepicker" required />
                 <span asp-validation-for="data" class="text-danger"></span>
             </div>
 
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-outline-dark btn-block">Kurti rezervaciją</button>
         </form>
     </div>
 </div>
