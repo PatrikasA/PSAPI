@@ -16,6 +16,7 @@ using Newtonsoft.Json;
 using System.Text;
 using System.Net.Http;
 using System.Reflection;
+using Restoranas.Helper;
 
 namespace Restoranas.Controllers
 {
@@ -28,7 +29,7 @@ namespace Restoranas.Controllers
         public ApsilankymaiController(ILogger<HomeController> logger)
         {
             _logger = logger;
-           // _httpClientFactory = httpClientFactory;
+            // _httpClientFactory = httpClientFactory;
 
         }
 
@@ -79,7 +80,7 @@ namespace Restoranas.Controllers
 
             return RedirectToAction("Aktualiausi");
         }
-    
+
 
         // Returns list of tables that together can fit all of the people needed for the visit
         public List<int> FindOptimalTableCombination(Visit visit)
@@ -213,10 +214,17 @@ namespace Restoranas.Controllers
 
         public async Task<IActionResult> Aktualiausi()
         {
-            // Get the latest future visits from the database
-            List<Visit> futureVisits = await GetFutureVisitsAsync();
-            ViewData["FutureVisits"] = futureVisits;
+            List<(Visit, List<string>)> visits = new List<(Visit, List<string>)>();
 
+            List<Visit> futureVisits = await GetFutureVisitsAsync();
+            foreach (Visit visit in futureVisits)
+            {
+                List<string> meals = await GetMealsAsync(visit.apsilankymo_id);
+                visits.Add((visit, meals)); ;
+            }
+
+            //ViewData["FutureVisits"] = futureVisits;
+            ViewData["Visits"] = visits;
             return View();
         }
 
@@ -253,6 +261,63 @@ namespace Restoranas.Controllers
 
             return futureVisits;
         }
+
+        private async Task<List<string>> GetMealsAsync(int id)
+        {
+            Dictionary<string, (int quantity, decimal totalPrice)> mealInfo = new Dictionary<string, (int, decimal)>();
+            decimal totalSum = 0; // Bendra visų patiekalų suma
+
+            string query = @"
+        SELECT p.pavadinimas, up.kiekis, p.kaina
+        FROM uzsakytas_patiekalas up
+        INNER JOIN patiekalas p ON up.patiekalo_id = p.patiekalo_id
+        WHERE up.apsilankymo_id = @apsilankymoId
+    ";
+
+            using (var conn = new NpgsqlConnection(connString))
+            {
+                await conn.OpenAsync();
+
+                using (var cmd = new NpgsqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@apsilankymoId", id);
+
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            string mealName = reader.GetString(reader.GetOrdinal("pavadinimas"));
+                            int quantity = reader.GetInt32(reader.GetOrdinal("kiekis"));
+                            decimal price = (decimal)reader.GetDouble(reader.GetOrdinal("kaina"));
+
+                            // Jei patiekalo pavadinimas jau yra žodyne, pridedame kiekį ir bendrą kainą
+                            if (mealInfo.ContainsKey(mealName))
+                            {
+                                var (existingQuantity, existingTotalPrice) = mealInfo[mealName];
+                                mealInfo[mealName] = (existingQuantity + quantity, existingTotalPrice + (quantity * price));
+                            }
+                            // Jei patiekalo pavadinimas dar nėra žodyne, pridedame naują įrašą
+                            else
+                            {
+                                mealInfo[mealName] = (quantity, quantity * price);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Sukuriamas string'ų sąrašas su susumavimais
+            List<string> meals = new List<string>();
+            foreach (var kvp in mealInfo)
+            {
+                totalSum += kvp.Value.totalPrice;
+                meals.Add($"{kvp.Key}: {kvp.Value.quantity}, Suma: {kvp.Value.totalPrice}");
+            }
+
+            meals.Add($"BENDRA SUMA: {totalSum}");
+            return meals;
+        }
+
 
         public IActionResult Meniu()
         {
@@ -316,7 +381,7 @@ namespace Restoranas.Controllers
                 return BadRequest("nepavyko atlikti mokėjimo");
             }
             // PayPal Sandbox API URL ir kiti duomenys
-            string   payPalApiUrl = "https://api.sandbox.paypal.com";
+            string payPalApiUrl = "https://api.sandbox.paypal.com";
             string clientId = "YourPayPalSandboxClientId";
             string clientSecret = "YourPayPalSandboxClientSecret";
 
@@ -350,7 +415,7 @@ namespace Restoranas.Controllers
 
             // Pateikite mokėjimo užklausą į PayPal Sandbox API
             var content = new StringContent(JsonConvert.SerializeObject(paymentRequest), Encoding.UTF8, "application/json");
-           // var response = await client.PostAsync($"{payPalApiUrl}/v1/payments/payment", content);
+            // var response = await client.PostAsync($"{payPalApiUrl}/v1/payments/payment", content);
 
             return NotFound();
         }
@@ -371,18 +436,18 @@ namespace Restoranas.Controllers
 
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
-                            
+
                         return new Visit
-                            {
-                                apsilankymo_id =apsilankymoId,
-                                data = reader.GetDateTime(reader.GetOrdinal("data")),
-                                zmoniu_skaicius = reader.GetInt32(reader.GetOrdinal("zmoniu_skaicius")),
-                                apmoketas = reader.GetBoolean(reader.GetOrdinal("apmoketas")),
-                                naudotojo_id = 7,
-                                staliuko_nr = reader.GetInt32(reader.GetOrdinal("staliuko_nr")),
-                                uzbaigtas = reader.GetBoolean(reader.GetOrdinal("uzbaigtas"))
-                            };
-                        
+                        {
+                            apsilankymo_id = apsilankymoId,
+                            data = reader.GetDateTime(reader.GetOrdinal("data")),
+                            zmoniu_skaicius = reader.GetInt32(reader.GetOrdinal("zmoniu_skaicius")),
+                            apmoketas = reader.GetBoolean(reader.GetOrdinal("apmoketas")),
+                            naudotojo_id = 7,
+                            staliuko_nr = reader.GetInt32(reader.GetOrdinal("staliuko_nr")),
+                            uzbaigtas = reader.GetBoolean(reader.GetOrdinal("uzbaigtas"))
+                        };
+
                     }
                 }
             }
@@ -405,6 +470,40 @@ namespace Restoranas.Controllers
                 }
             }
         }
+
+        [HttpPost]
+        public  IActionResult Cancel(int visitId)
+        {
+            Console.WriteLine($"VisitId: {visitId}");
+
+            try
+            {
+                StringBuilder commandTextBuilder = new StringBuilder();
+                commandTextBuilder.AppendFormat("DELETE FROM uzsakytas_patiekalas WHERE apsilankymo_id = {0} ", visitId);
+                StringBuilder commandTextBuilder2 = new StringBuilder();
+                commandTextBuilder2.AppendFormat("DELETE FROM apsilankymas WHERE apsilankymo_id = {0} ", visitId);
+
+                string commandText = commandTextBuilder.ToString();
+                string commandText2 = commandTextBuilder2.ToString();
+
+                bool success = DataSource.UpdateDataSQL(commandText);
+                bool success2 = DataSource.UpdateDataSQL(commandText2);
+
+                if (success && success2)
+                {
+                    return RedirectToAction("Aktualiausi", "Apsilankymai");
+                }
+                else
+                {
+                    return RedirectToAction("Aktualiausi", "Apsilankymai");
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Įvyko klaida salinant apsilankyma: {ex.Message}");
+            }
+        }
+
 
     }
 }
