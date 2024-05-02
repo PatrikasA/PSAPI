@@ -11,7 +11,7 @@
     <div class="row">
         <div class="col-6 col-md-4">
             <a class="btn btn-dark btn-block d-flex align-items-center justify-content-center"
-            asp-area="" asp-controller="Apsilankymai" asp-action="Aktualiausi">Aktualiausi apsilankymai</a>
+               asp-area="" asp-controller="Apsilankymai" asp-action="Aktualiausi">Aktualiausi apsilankymai</a>
         </div>
         <div class="col-6 col-md-4">
             <a class="btn btn-outline-dark btn-block d-flex align-items-center justify-content-center"
@@ -19,7 +19,7 @@
         </div>
         <div class="col-6 col-md-4">
             <a class="btn btn-outline-dark btn-block d-flex align-items-center justify-content-center"
-            asp-area="" asp-controller="Apsilankymai" asp-action="Praeje">Praėję apsilankymai</a>
+               asp-area="" asp-controller="Apsilankymai" asp-action="Praeje">Praėję apsilankymai</a>
         </div>
     </div>
 
@@ -63,9 +63,36 @@
     </div>
 
 
-    @if (ViewData["FutureVisits"] != null)
+    @*    @if (ViewData["FutureVisits"] != null)
     {
-        foreach (var futureVisit in ViewData["FutureVisits"] as List<Visit>)
+    foreach (var futureVisit in ViewData["FutureVisits"] as List<Visit>)
+    {
+    <div class="skiltis p-3">
+    <div>
+    <p><strong>@futureVisit.data.ToString("MMM d, dddd, HH:mm")</strong></p>
+    <p><strong>Žmonių kiekis:</strong> @futureVisit.zmoniu_skaicius</p>
+    <p><strong>Staliuko Nr:</strong> @futureVisit.staliuko_nr</p>
+
+
+    <div class="row">
+    <div class="col-12 col-md-8 offset-md-2">
+    <button class="btn btn-outline-dark btn-block" onclick="location.href='@Url.Action("GetMeals", "Patiekalas", new { uzsakymoId = futureVisit.apsilankymo_id })'">Išsirinkti patiekalus (pateikti užsakymą)</button>
+    </div>
+    </div>
+    <br />
+    <div class="row">
+    <div class="col-12 col-md-8 offset-md-2">
+    <button class="btn btn-outline-dark btn-block">Atšaukti rezervaciją</button>
+    </div>
+    </div>
+    </div>
+    </div>
+    }
+    }*@
+
+    @if (ViewData["Visits"] != null)
+    {
+        foreach (var (futureVisit, meals) in ViewData["Visits"] as List<(Visit, List<string>)>)
         {
             <div class="skiltis p-3">
                 <div>
@@ -73,20 +100,30 @@
                     <p><strong>Žmonių kiekis:</strong> @futureVisit.zmoniu_skaicius</p>
                     <p><strong>Staliuko Nr:</strong> @futureVisit.staliuko_nr</p>
 
+                    <p><strong>Patiekalai:</strong></p>
+                    <ul>
+                        @foreach (var meal in meals)
+                        {
+                            <li>@meal</li>
+                        }
+                    </ul>
+
                     <div class="row">
                         <div class="col-12 col-md-8 offset-md-2">
                             <button class="btn btn-outline-dark btn-block" onclick="location.href='@Url.Action("GetMeals", "Patiekalas", new { uzsakymoId = futureVisit.apsilankymo_id })'">Išsirinkti patiekalus (pateikti užsakymą)</button>
                         </div>
                     </div>
-                    <br />
-                    <div class="row">
-                        <div class="col-12 col-md-8 offset-md-2">
-                            <button class="btn btn-outline-dark btn-block">Atšaukti rezervaciją</button>
-                        </div>
-                    </div>
+
+                    <form method="post" action="@Url.Action("Cancel", "Apsilankymai")">
+                        <input type="hidden" name="visitId" value="@futureVisit.apsilankymo_id" />
+                        <button type="submit" class="btn btn-outline-dark btn-block">Atšaukti</button>
+                    </form>
+
+
                 </div>
             </div>
         }
     }
+
 
 </div>
