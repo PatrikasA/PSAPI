@@ -172,21 +172,13 @@ namespace Restoranas.Controllers
             try
             {
                 StringBuilder commandTextBuilder = new StringBuilder();
-                commandTextBuilder.Append("INSERT INTO uzsakytas_patiekalas (uzsakymo_id, kiekis, patiekalo_id, apsilankymo_id) ");
-                commandTextBuilder.AppendFormat("VALUES ({0}, {1}, {2}, 7)",
-                    uzsakymoId, kiekis, patiekaloId );
+                commandTextBuilder.Append("INSERT INTO uzsakytas_patiekalas (kiekis, patiekalo_id, apsilankymo_id) ");
+                commandTextBuilder.AppendFormat("VALUES ({0}, {1}, {2})",
+                            kiekis, patiekaloId, uzsakymoId );
 
                 string commandText = commandTextBuilder.ToString();
                 bool success = DataSource.UpdateDataSQL(commandText);
 
-                /*                if (success)
-                                {
-                                    return Ok("Patiekalas sėkmingai pridėtas prie užsakymo.");
-                                }
-                                else
-                                {
-                                    return BadRequest("Patiekalo pridėjimas nepavyko dėl duomenų bazės klaidos.");
-                                }*/
                 if (success)
                 {
                     TempData["SuccessMessage"] = "Patiekalas sėkmingai pridėtas prie užsakymo.";
