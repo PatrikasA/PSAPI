@@ -65,20 +65,21 @@
 
     @if (ViewData["FutureVisits"] != null)
     {
-        @foreach (var visitGroup in (ViewData["FutureVisits"] as List<Visit>).GroupBy(v => new { v.naudotojo_id, v.data, v.apsilankymo_id }))
+        @foreach (var visitGroup in (ViewData["FutureVisits"] as List<Visit>).GroupBy(v => v.data)) // Group by visit date only
         {
             <div class="skiltis p-3">
-                @{
-                    var tableNumbers = string.Join(", ", visitGroup.Select(v => v.staliuko_nr));
-                }
                 <div class="visit-box">
-                    <p><strong>@visitGroup.Key.data.ToString("MMM d, dddd")</strong></p>
+                    <p><strong>@visitGroup.Key.ToString("MMM d, dddd")</strong></p> <!-- Display visit date -->
+                    @{
+                        // Concatenate table numbers for all visits in the group
+                        var tableNumbers = string.Join(", ", visitGroup.Select(v => v.staliuko_nr));
+                    }
                     <p><strong>Žmonių kiekis:</strong> @visitGroup.First().zmoniu_skaicius</p>
-                    <p><strong>Staliuko Nr:</strong> @tableNumbers</p>
+                    <p><strong>Staliuko Nr:</strong> @tableNumbers</p> <!-- Display concatenated table numbers -->
 
                     <div class="row">
                         <div class="col-12 col-md-8 offset-md-2">
-                            <button class="btn btn-outline-dark btn-block" onclick="location.href='@Url.Action("GetMeals", "Patiekalas", new { uzsakymoId = visitGroup.Key.apsilankymo_id })'">Išsirinkti patiekalus (pateikti užsakymą)</button>
+                            <button class="btn btn-outline-dark btn-block" onclick="location.href='@Url.Action("GetMeals", "Patiekalas", new { uzsakymoId = visitGroup.First().apsilankymo_id })'">Išsirinkti patiekalus (pateikti užsakymą)</button> <!-- Use the first visit's apsilankymo_id for action -->
                         </div>
                     </div>
                     <br />
@@ -91,6 +92,7 @@
             </div>
         }
     }
+
 
 
 
