@@ -11,5 +11,6 @@ namespace Restoranas.Models
         [Required(ErrorMessage = "Seat count is required")]
         [Display(Name = "Seat Count")]
         public int Capacity { get; set; }
+
     }
 }

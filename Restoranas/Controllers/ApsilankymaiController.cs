@@ -45,12 +45,37 @@ namespace Restoranas.Controllers
                 return View("VisitCreationForm", visit);
             }
 
-            // Find the optimal table combination
+            //
+            // Check if the user has not already made a reservation for the selected day
+            string checkQuery = "SELECT COUNT(*) FROM apsilankymas WHERE naudotojo_id = @userId AND DATE(data) = DATE(@visitDate)";
+            bool hasReservation;
+            using (var conn = new NpgsqlConnection(connString))
+            {
+                conn.Open();
+                using (var cmd = new NpgsqlCommand(checkQuery, conn))
+                {
+                    cmd.Parameters.AddWithValue("@userId", 6); // Assuming 6 is the user's ID
+                    cmd.Parameters.AddWithValue("@visitDate", visit.data);
+
+                    long count = (long)cmd.ExecuteScalar();
+                    int countInt = (int)count;
+                    hasReservation = countInt > 0;
+                }
+            }
+
+            if (hasReservation)
+            {
+                TempData["ErrorMessage"] = "Jūs jau esate užrezervavę staliuką šią dieną.";
+                return View("VisitCreationForm");
+            }
+
+            // Surasti tinkamą staliukų kombinaciją rezervacijai
             List<int> optimalTables = FindOptimalTableCombination(visit);
 
             // If no optimal tables found
             if (optimalTables.Count == 0)
             {
+                TempData["ErrorMessage"] = "Laisvų staliukų, kurie tenktintų jūsų pasirinktą žmonių skaičių pasirinktu laiku nėra.";
                 return View("VisitCreationForm");
             }
 
@@ -78,9 +103,12 @@ namespace Restoranas.Controllers
                 }
             }
 
+            return RedirectToAction("ReturnToVisitsPage");
+        }
+        public IActionResult ReturnToVisitsPage()
+        {
             return RedirectToAction("Aktualiausi");
         }
-
 
         // Returns list of tables that together can fit all of the people needed for the visit
         public List<int> FindOptimalTableCombination(Visit visit)
@@ -209,30 +237,24 @@ namespace Restoranas.Controllers
 
         public IActionResult VisitsPage()
         {
-            return View("Aktualiausi");
+            return RedirectToAction("Aktualiausi");
         }
 
         public async Task<IActionResult> Aktualiausi()
         {
-            List<(Visit, List<string>)> visits = new List<(Visit, List<string>)>();
+            // Get the latest future visits from the database
+            List<Visit> futureVisits = await RefreshVisits();
+            ViewData["FutureVisits"] = futureVisits;
 
-            List<Visit> futureVisits = await GetFutureVisitsAsync();
-            foreach (Visit visit in futureVisits)
-            {
-                List<string> meals = await GetMealsAsync(visit.apsilankymo_id);
-                visits.Add((visit, meals)); ;
-            }
-
-            //ViewData["FutureVisits"] = futureVisits;
-            ViewData["Visits"] = visits;
             return View();
         }
 
-        private async Task<List<Visit>> GetFutureVisitsAsync()
+        // Returns future visits
+        private async Task<List<Visit>> RefreshVisits()
         {
             List<Visit> futureVisits = new List<Visit>();
 
-            string query = "SELECT * FROM apsilankymas WHERE data > CURRENT_DATE ORDER BY data";
+            string query = "SELECT * FROM apsilankymas WHERE data >= CURRENT_DATE ORDER BY data";
 
             using (var conn = new NpgsqlConnection(connString))
             {
@@ -262,17 +284,55 @@ namespace Restoranas.Controllers
             return futureVisits;
         }
 
+        public IActionResult Meniu()
+        {
+            return View();
+        }
+        public async Task<IActionResult> Praeje()
+        {
+            List<Visit> visits = new List<Visit>();
+
+            string query = "SELECT * FROM apsilankymas WHERE data < CURRENT_DATE ORDER BY data";
+
+            using (var conn = new NpgsqlConnection(connString))
+            {
+                await conn.OpenAsync();
+
+                using (var cmd = new NpgsqlCommand(query, conn))
+                {
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            visits.Add(new Visit
+                            {
+                                apsilankymo_id = reader.GetInt32(reader.GetOrdinal("apsilankymo_id")),
+                                data = reader.GetDateTime(reader.GetOrdinal("data")),
+                                zmoniu_skaicius = reader.GetInt32(reader.GetOrdinal("zmoniu_skaicius")),
+                                apmoketas = reader.GetBoolean(reader.GetOrdinal("apmoketas")),
+                                naudotojo_id = 7,
+                                staliuko_nr = reader.GetInt32(reader.GetOrdinal("staliuko_nr")),
+                                uzbaigtas = reader.GetBoolean(reader.GetOrdinal("uzbaigtas"))
+                            });
+                        }
+                    }
+                }
+            }
+
+            return View(visits);
+        }
+
         private async Task<List<string>> GetMealsAsync(int id)
         {
             Dictionary<string, (int quantity, decimal totalPrice)> mealInfo = new Dictionary<string, (int, decimal)>();
             decimal totalSum = 0; // Bendra visų patiekalų suma
 
             string query = @"
-        SELECT p.pavadinimas, up.kiekis, p.kaina
-        FROM uzsakytas_patiekalas up
-        INNER JOIN patiekalas p ON up.patiekalo_id = p.patiekalo_id
-        WHERE up.apsilankymo_id = @apsilankymoId
-    ";
+    SELECT p.pavadinimas, up.kiekis, p.kaina
+    FROM uzsakytas_patiekalas up
+    INNER JOIN patiekalas p ON up.patiekalo_id = p.patiekalo_id
+    WHERE up.apsilankymo_id = @apsilankymoId
+";
 
             using (var conn = new NpgsqlConnection(connString))
             {
@@ -316,45 +376,6 @@ namespace Restoranas.Controllers
 
             meals.Add($"BENDRA SUMA: {totalSum}");
             return meals;
-        }
-
-
-        public IActionResult Meniu()
-        {
-            return View();
-        }
-        public async Task<IActionResult> Praeje()
-        {
-            List<Visit> visits = new List<Visit>();
-
-            string query = "SELECT * FROM apsilankymas WHERE data < CURRENT_DATE ORDER BY data";
-
-            using (var conn = new NpgsqlConnection(connString))
-            {
-                await conn.OpenAsync();
-
-                using (var cmd = new NpgsqlCommand(query, conn))
-                {
-                    using (var reader = await cmd.ExecuteReaderAsync())
-                    {
-                        while (await reader.ReadAsync())
-                        {
-                            visits.Add(new Visit
-                            {
-                                apsilankymo_id = reader.GetInt32(reader.GetOrdinal("apsilankymo_id")),
-                                data = reader.GetDateTime(reader.GetOrdinal("data")),
-                                zmoniu_skaicius = reader.GetInt32(reader.GetOrdinal("zmoniu_skaicius")),
-                                apmoketas = reader.GetBoolean(reader.GetOrdinal("apmoketas")),
-                                naudotojo_id = 7,
-                                staliuko_nr = reader.GetInt32(reader.GetOrdinal("staliuko_nr")),
-                                uzbaigtas = reader.GetBoolean(reader.GetOrdinal("uzbaigtas"))
-                            });
-                        }
-                    }
-                }
-            }
-
-            return View(visits);
         }
 
 
@@ -472,7 +493,7 @@ namespace Restoranas.Controllers
         }
 
         [HttpPost]
-        public  IActionResult Cancel(int visitId)
+        public IActionResult Cancel(int visitId)
         {
             Console.WriteLine($"VisitId: {visitId}");
 
@@ -503,7 +524,6 @@ namespace Restoranas.Controllers
                 return BadRequest($"Įvyko klaida salinant apsilankyma: {ex.Message}");
             }
         }
-
 
     }
 }
