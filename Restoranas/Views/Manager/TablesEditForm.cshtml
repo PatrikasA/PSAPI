@@ -1,0 +1,44 @@
+﻿@model Restoranas.Models.TableInfo
+
+<div class="phone">
+    <div class="skiltiespavadinimas">
+        <p class="center">Redaguoti staliuką</p>
+    </div>
+
+    <form asp-controller="Tables" asp-action="EditTable" method="post">
+        <div asp-validation-summary="All" class="text-danger"></div>
+
+        <div class="form-group">
+            <label asp-for="TableNumber" class="control-label">Staliuko numeris</label>
+            <input asp-for="TableNumber" class="form-control" readonly /> <!-- Make this field read-only -->
+            <span asp-validation-for="TableNumber" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Capacity" class="control-label">Žmonių skaičius</label>
+            <input asp-for="Capacity" class="form-control" />
+            <span asp-validation-for="Capacity" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-outline-dark btn-block">Atnaujinti</button>
+        </div>
+        <div class="form-group text-center">
+            <br> 
+            <a href="@Url.Action("TablesPage", "Tables")" class="btn btn-outline-secondary">Grįžti</a>
+        </div>
+
+    </form>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="row">
+            <div class="col-12 col-md-8 offset-md-2">
+                <br>
+                <div class="alert alert-danger">
+                    @TempData["ErrorMessage"]
+                </div>
+            </div>
+        </div>
+    }
+</div>

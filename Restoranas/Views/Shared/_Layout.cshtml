@@ -23,20 +23,15 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
+                        
+                        </li>
+
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Reservation" asp-action="Index">Rezervacija</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Waiter" asp-action="MainViewWaiter">Salės darbuotojas</a>
                         </li>
-                        </li>
-
-
-                        <li class="nav-item dropdown">
-                            <a class="nav-link text-dark dropdown-toggle" href="#" id="pageSystemDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Staliukai
-                            </a>
-                            <div class="dropdown-menu" aria-labelledby="pageSystemDropdown">
-                                <a class="dropdown-item" asp-area="" asp-controller="Home" asp-action="CreateTable">Sukurti staliuką</a>
-                                <a class="dropdown-item" asp-area="" asp-controller="Home" asp-action="GetTables">Rodyti staliukus</a>
-                            </div>
+                        
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Tables" asp-action="TablesPage">Vadovas</a>
                         </li>
 
                     </ul>

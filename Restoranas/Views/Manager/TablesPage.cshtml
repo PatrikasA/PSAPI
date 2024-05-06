@@ -1,7 +1,5 @@
 ﻿@model List<Restoranas.Models.TableInfo>
 
-<h2>Tables</h2>
-
 <div class="phone">
     <div class="row mb-3">
         <div class="col">
@@ -16,11 +14,11 @@
         </div>
         <div class="col-6 col-md-4">
             <a class="btn btn-dark btn-block d-flex align-items-center justify-content-center"
-               asp-area="" asp-controller="Patiekalas" asp-action="Index">Staliukai</a>
+               asp-area="" asp-controller="Tables" asp-action="TablesPage">Staliukai</a>
         </div>
         <div class="col-6 col-md-4">
             <a class="btn btn-outline-dark btn-block d-flex align-items-center justify-content-center"
-               asp-area="" asp-controller="Apsilankymai" asp-action="Praeje">Restoranas</a>
+               asp-area="" asp-controller="Restaurant" asp-action="OpenRestaurantInfo">Restoranas</a>
         </div>
     </div>
 
@@ -32,9 +30,10 @@
 
     <div class="row">
         <div class="col-12 col-md-8 offset-md-2">
-            <button class="btn btn-outline-dark btn-block">Kurti naują staliuką</button>
+            <a href="@Url.Action("OpenTableCreation", "Tables")" class="btn btn-outline-dark btn-block">Kurti naują staliuką</a>
         </div>
     </div>
+
 
     <br>
 
@@ -61,10 +60,10 @@
                         @Html.DisplayFor(modelItem => item.Capacity)
                     </td>
                     <td>
-                        <a class="btn btn-outline-dark" asp-action="EditTable" asp-route-id="@item.TableNumber">Redaguoti</a>
+                        <a class="btn btn-outline-dark" asp-action="OpenTableEdit" asp-route-id="@item.TableNumber">Redaguoti</a>
                     </td>
                     <td>
-                        <a class="btn btn-outline-dark" asp-action="EditTable" asp-route-id="@item.TableNumber">Ištrinti</a>
+                        <a class="btn btn-outline-danger" asp-action="OpenTableDelete" asp-route-id="@item.TableNumber">Ištrinti</a>
                     </td>
                 </tr>
             }
