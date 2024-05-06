@@ -69,7 +69,7 @@
         {
             <div class="skiltis p-3">
                 <div class="visit-box">
-                    <p><strong>@visitGroup.Key.ToString("MMM d, dddd")</strong></p> <!-- Display visit date -->
+                    <p><strong>@visitGroup.Key.ToString("MMM d, dddd HH:mm")</strong></p> <!-- Display visit date -->
                     @{
                         // Concatenate table numbers for all visits in the group
                         var tableNumbers = string.Join(", ", visitGroup.Select(v => v.staliuko_nr));
