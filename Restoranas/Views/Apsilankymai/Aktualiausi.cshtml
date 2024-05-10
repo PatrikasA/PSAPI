@@ -83,11 +83,11 @@
                         </div>
                     </div>
                     <br />
-                    <div class="row">
-                        <div class="col-12 col-md-8 offset-md-2">
-                            <button class="btn btn-outline-dark btn-block">Atšaukti rezervaciją</button>
-                        </div>
-                    </div>
+
+                    <form method="post" action="@Url.Action("Cancel", "Apsilankymai")">
+                        <input type="hidden" name="visitId" value="@visitGroup.First().apsilankymo_id" />
+                        <button type="submit" class="btn btn-outline-dark btn-block">Atšaukti</button>
+                    </form>
                 </div>
             </div>
         }

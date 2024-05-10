@@ -37,8 +37,18 @@ namespace Restoranas.Controllers
 
                             using (var reader = cmd.ExecuteReader())
                             {
+                                //var userId = cmd.ExecuteScalar(); // Gauti naudotojo ID iš duomenų bazės
+
                                 if (reader.Read())
                                 {
+
+                                    // Gauti likusią naudotojo informaciją ir pridėti ją prie User objekto
+                                    userModel.naudotojo_id = reader.GetInt32(0);
+                                    // Čia galite pridėti kitus laukus, kuriuos norite saugoti User objekte
+
+                                    // Galite saugoti prisijungusio naudotojo informaciją sesijoje arba claims, jei reikia
+                                    HttpContext.Session.SetInt32("UserId", userModel.naudotojo_id);
+
                                     return RedirectToAction("Aktualiausi", "Apsilankymai");
                                 }
                                 else

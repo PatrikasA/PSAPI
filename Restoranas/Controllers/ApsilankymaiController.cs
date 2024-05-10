@@ -17,6 +17,7 @@ using System.Text;
 using System.Net.Http;
 using System.Reflection;
 using Restoranas.Helper;
+using System.Security.Claims;
 
 namespace Restoranas.Controllers
 {
@@ -49,12 +50,16 @@ namespace Restoranas.Controllers
             // Check if the user has not already made a reservation for the selected day
             string checkQuery = "SELECT COUNT(*) FROM apsilankymas WHERE naudotojo_id = @userId AND DATE(data) = DATE(@visitDate)";
             bool hasReservation;
+
+            var userId = HttpContext.Session.GetInt32("UserId");
+
+
             using (var conn = new NpgsqlConnection(connString))
             {
                 conn.Open();
                 using (var cmd = new NpgsqlCommand(checkQuery, conn))
                 {
-                    cmd.Parameters.AddWithValue("@userId", 6); // Assuming 6 is the user's ID
+                    cmd.Parameters.AddWithValue("@userId", userId); // Assuming 6 is the user's ID
                     cmd.Parameters.AddWithValue("@visitDate", visit.data);
 
                     long count = (long)cmd.ExecuteScalar();
@@ -83,6 +88,7 @@ namespace Restoranas.Controllers
             string insertQuery = "INSERT INTO apsilankymas (data, zmoniu_skaicius, apmoketas, naudotojo_id, staliuko_nr, uzbaigtas) " +
                                  "VALUES (@data, @peopleCount, @paid, @userId, @tableNumber, @completed)";
 
+
             using (var conn = new NpgsqlConnection(connString))
             {
                 conn.Open();
@@ -94,7 +100,7 @@ namespace Restoranas.Controllers
                         cmd.Parameters.AddWithValue("@data", visit.data);
                         cmd.Parameters.AddWithValue("@peopleCount", visit.zmoniu_skaicius);
                         cmd.Parameters.AddWithValue("@paid", false);
-                        cmd.Parameters.AddWithValue("@userId", 6);
+                        cmd.Parameters.AddWithValue("@userId", userId);
                         cmd.Parameters.AddWithValue("@tableNumber", tableNumber);
                         cmd.Parameters.AddWithValue("@completed", false);
 
@@ -292,7 +298,9 @@ namespace Restoranas.Controllers
         {
             List<Visit> visits = new List<Visit>();
 
-            string query = "SELECT * FROM apsilankymas WHERE data < CURRENT_DATE ORDER BY data";
+            var userId = HttpContext.Session.GetInt32("UserId");
+            string query = "SELECT * FROM apsilankymas WHERE naudotojo_id = @userId AND data < CURRENT_DATE ORDER BY data";
+
 
             using (var conn = new NpgsqlConnection(connString))
             {
@@ -300,6 +308,8 @@ namespace Restoranas.Controllers
 
                 using (var cmd = new NpgsqlCommand(query, conn))
                 {
+                    cmd.Parameters.AddWithValue("@userId", userId);
+
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())
@@ -310,7 +320,7 @@ namespace Restoranas.Controllers
                                 data = reader.GetDateTime(reader.GetOrdinal("data")),
                                 zmoniu_skaicius = reader.GetInt32(reader.GetOrdinal("zmoniu_skaicius")),
                                 apmoketas = reader.GetBoolean(reader.GetOrdinal("apmoketas")),
-                                naudotojo_id = 7,
+                                naudotojo_id = userId,
                                 staliuko_nr = reader.GetInt32(reader.GetOrdinal("staliuko_nr")),
                                 uzbaigtas = reader.GetBoolean(reader.GetOrdinal("uzbaigtas"))
                             });
