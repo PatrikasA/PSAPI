@@ -1,0 +1,64 @@
+﻿@model List<Restoranas.Models.User>
+
+<div class="phone">
+    <div class="row mb-3">
+        <div class="col">
+            <h1 class="center">Vadovas | Jonas Jonaitis</h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-6 col-md-3">
+            <a class="btn btn-outline-dark btn-block d-flex align-items-center justify-content-center"
+               asp-area="" asp-controller="Patiekalas" asp-action="MealsPage">Patiekalai</a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a class="btn btn-outline-dark btn-block d-flex align-items-center justify-content-center"
+               asp-area="" asp-controller="Tables" asp-action="TablesPage">Staliukai</a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a class="btn btn-outline-dark btn-block d-flex align-items-center justify-content-center"
+               asp-area="" asp-controller="Restaurant" asp-action="OpenRestaurantInfo">Restoranas</a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a class="btn btn-dark btn-block d-flex align-items-center justify-content-center"
+               asp-area="" asp-controller="Employees" asp-action="OpenEmployeesPage">Darbuotojai</a>
+        </div>
+    </div>
+
+    <br>
+
+    <div class="skiltiespavadinimas">
+        <p class="center">Restorano darbuotojai</p>
+    </div>
+
+    <div class="row">
+        <div class="col-12 col-md-8 offset-md-2">
+            <a href="@Url.Action("OpenRestaurantInfo", "Restaurant")" class="btn btn-outline-dark btn-block">Registruoti darbuotoją</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Prisijungimo vardas</th>
+                        <th>Naudotojo tipas</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model)
+                    {
+                        <tr>
+                            <td>@user.prisijungimo_vardas</td>
+                            <td>@user.naudotojo_tipas_id</td>
+                            <td><a href="@Url.Action("OpenRestaurantInfo", "Restaurant")" class="btn btn-outline-dark btn-block">Atleisti</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

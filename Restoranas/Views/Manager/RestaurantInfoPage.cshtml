@@ -8,17 +8,21 @@
     </div>
 
     <div class="row">
-        <div class="col-6 col-md-4">
+        <div class="col-6 col-md-3">
             <a class="btn btn-outline-dark btn-block d-flex align-items-center justify-content-center"
-               asp-area="" asp-controller="Apsilankymai" asp-action="Aktualiausi">Patiekalai</a>
+               asp-area="" asp-controller="Patiekalas" asp-action="MealsPage">Patiekalai</a>
         </div>
-        <div class="col-6 col-md-4">
+        <div class="col-6 col-md-3">
             <a class="btn btn-outline-dark btn-block d-flex align-items-center justify-content-center"
                asp-area="" asp-controller="Tables" asp-action="TablesPage">Staliukai</a>
         </div>
-        <div class="col-6 col-md-4">
+        <div class="col-6 col-md-3">
             <a class="btn btn-dark btn-block d-flex align-items-center justify-content-center"
                asp-area="" asp-controller="Restaurant" asp-action="OpenRestaurantInfo">Restoranas</a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a class="btn btn-outline-dark btn-block d-flex align-items-center justify-content-center"
+               asp-area="" asp-controller="Employees" asp-action="OpenEmployeesPage">Darbuotojai</a>
         </div>
     </div>
 
@@ -26,6 +30,29 @@
 
     <div class="skiltiespavadinimas">
         <p class="center">Informacija apie restoraną</p>
+    </div>
+
+    <div class="skiltiespavadinimas">
+        <p class="center">Darbo laikas</p>
+    </div>
+
+    <div>
+        <p class="center"> Pirmadienis 9:00 - 21:00</p>
+        <p class="center"> Antradienis 9:00 - 21:00</p>
+        <p class="center"> Trečiadienis 9:00 - 21:00</p>
+        <p class="center"> Ketvirtadienis 9:00 - 21:00</p>
+        <p class="center"> Penktadienis 9:00 - 21:00</p>
+        <p class="center"> Šeštadienis 11:00 - 21:00</p>
+        <p class="center"> Sekmadienis 11:00 - 21:00</p>
+    </div>
+    <div class="row">
+        <div class="col-12 col-md-8 offset-md-2">
+            <a href="@Url.Action("OpenRestaurantInfo", "Restaurant")" class="btn btn-outline-dark btn-block">Redaguoti darbo laiką</a>
+        </div>
+    </div>
+
+    <div class="skiltiespavadinimas">
+        <p class="center">Nedarbo dienos</p>
     </div>
 
 
