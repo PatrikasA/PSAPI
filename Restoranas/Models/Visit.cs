@@ -17,5 +17,7 @@ namespace Restoranas.Models
         public int? naudotojo_id { get; set; }
         public int staliuko_nr { get; set; }    
         public bool uzbaigtas { get; set; }
-    }
+
+		public List<(string Pavadinimas, double Kaina, int Kiekis)> OrderedMeals { get; set; }
+	}
 }

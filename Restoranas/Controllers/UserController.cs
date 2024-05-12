@@ -43,6 +43,7 @@ namespace Restoranas.Controllers
                                     int userType = reader.GetInt32(reader.GetOrdinal("naudotojo_tipas_id"));
 
                                     HttpContext.Session.SetInt32("UserId", userModel.naudotojo_id);
+                                    HttpContext.Session.SetString("UserName", userModel.prisijungimo_vardas);
                                     HttpContext.Session.SetInt32("UserType", userType);
 
                                     switch (userType)

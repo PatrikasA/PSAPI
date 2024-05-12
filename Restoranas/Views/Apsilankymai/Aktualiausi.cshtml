@@ -1,17 +1,18 @@
 ﻿@{
     ViewData["Title"] = "Aktualiausi";
+    string userName = ViewContext.HttpContext.Session.GetString("UserName");
 }
 <div class="phone">
     <div class="row mb-3">
         <div class="col">
-            <h1 class="center">Klientas | Jonas Jonaitis</h1>
+            <h1 class="center">Klientas | @userName</h1>
         </div>
     </div>
 
     <div class="row">
         <div class="col-6 col-md-4">
             <a class="btn btn-dark btn-block d-flex align-items-center justify-content-center"
-            asp-area="" asp-controller="Apsilankymai" asp-action="Aktualiausi">Aktualiausi apsilankymai</a>
+               asp-area="" asp-controller="Apsilankymai" asp-action="Aktualiausi">Aktualiausi apsilankymai</a>
         </div>
         <div class="col-6 col-md-4">
             <a class="btn btn-outline-dark btn-block d-flex align-items-center justify-content-center"
@@ -19,12 +20,13 @@
         </div>
         <div class="col-6 col-md-4">
             <a class="btn btn-outline-dark btn-block d-flex align-items-center justify-content-center"
-            asp-area="" asp-controller="Apsilankymai" asp-action="Praeje">Praėję apsilankymai</a>
+               asp-area="" asp-controller="Apsilankymai" asp-action="Praeje">Praėję apsilankymai</a>
         </div>
     </div>
 
 
 
+    <!--
     <div class="skiltiespavadinimas">
         <p class="center">Dabartinis apsilankymas</p>
     </div>
@@ -49,6 +51,8 @@
             </div>
         </div>
     </div>
+    -->
+
 
 
     <div class="skiltiespavadinimas">
@@ -76,6 +80,17 @@
                     }
                     <p><strong>Žmonių kiekis:</strong> @visitGroup.First().zmoniu_skaicius</p>
                     <p><strong>Staliuko Nr:</strong> @tableNumbers</p> <!-- Display concatenated table numbers -->
+
+                    <p><strong>Užsakyti patiekalai:</strong></p>
+                    <ul>
+                        @foreach (var visit in visitGroup)
+                        {
+                            foreach (var meal in visit.OrderedMeals)
+                            {
+                                <li>@meal.Pavadinimas, @meal.Kaina€, @meal.Kiekis vnt.</li>
+                            }
+                        }
+                    </ul>
 
                     <div class="row">
                         <div class="col-12 col-md-8 offset-md-2">

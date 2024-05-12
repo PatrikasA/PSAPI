@@ -21,7 +21,7 @@ namespace Restoranas.Controllers
                 using (var conn = new NpgsqlConnection(connString))
                 {
                     await conn.OpenAsync();
-                    string query = "SELECT naudotojo_id, prisijungimo_vardas, naudotojo_tipas_id FROM naudotojas";
+                    string query = "SELECT naudotojo_id, prisijungimo_vardas, naudotojo_tipas_id FROM naudotojas WHERE naudotojo_tipas_id = 2";
                     using (var cmd = new NpgsqlCommand(query, conn))
                     {
                         using (var reader = await cmd.ExecuteReaderAsync())

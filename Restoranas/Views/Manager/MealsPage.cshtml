@@ -1,47 +1,59 @@
-﻿@model List<Restoranas.Models.Item>
+﻿@model List<Restoranas.Models.Meal>
 @{
-    ViewData["Title"] = "Meniu";
+	ViewData["Title"] = "Meniu";
+	string userName = ViewContext.HttpContext.Session.GetString("UserName");
 }
 <div class="phone">
-    <div class="row mb-3">
-        <div class="col">
-            <h1 class="center">Vadovas | Jonas Jonaitis</h1>
-        </div>
-    </div>
+	<div class="row mb-3">
+		<div class="col">
+			<h1 class="center">Vadovas | @userName</h1>
+		</div>
+	</div>
 
-    <div class="row">
-        <div class="col-6 col-md-3">
-            <a class="btn btn-dark btn-block d-flex align-items-center justify-content-center"
-               asp-area="" asp-controller="Patiekalas" asp-action="MealsPage">Patiekalai</a>
-        </div>
-        <div class="col-6 col-md-3">
-            <a class="btn btn-outline-dark btn-block d-flex align-items-center justify-content-center"
-               asp-area="" asp-controller="Tables" asp-action="TablesPage">Staliukai</a>
-        </div>
-        <div class="col-6 col-md-3">
-            <a class="btn btn-outline-dark btn-block d-flex align-items-center justify-content-center"
-               asp-area="" asp-controller="Restaurant" asp-action="OpenRestaurantInfo">Restoranas</a>
-        </div>
-        <div class="col-6 col-md-3">
-            <a class="btn btn-outline-dark btn-block d-flex align-items-center justify-content-center"
-               asp-area="" asp-controller="Employees" asp-action="OpenEmployeesPage">Darbuotojai</a>
-        </div>
-    </div>
+	<div class="row">
+		<div class="col-6 col-md-3">
+			<a class="btn btn-dark btn-block d-flex align-items-center justify-content-center"
+			   asp-area="" asp-controller="Patiekalas" asp-action="MealsPage">Patiekalai</a>
+		</div>
+		<div class="col-6 col-md-3">
+			<a class="btn btn-outline-dark btn-block d-flex align-items-center justify-content-center"
+			   asp-area="" asp-controller="Tables" asp-action="TablesPage">Staliukai</a>
+		</div>
+		<div class="col-6 col-md-3">
+			<a class="btn btn-outline-dark btn-block d-flex align-items-center justify-content-center"
+			   asp-area="" asp-controller="Restaurant" asp-action="OpenRestaurantInfo">Restoranas</a>
+		</div>
+		<div class="col-6 col-md-3">
+			<a class="btn btn-outline-dark btn-block d-flex align-items-center justify-content-center"
+			   asp-area="" asp-controller="Employees" asp-action="OpenEmployeesPage">Darbuotojai</a>
+		</div>
+	</div>
 
-    <div class="skiltiespavadinimas">
-        <p class="center">Restorano patiekalai</p>
-    </div>
+	<br>
 
-    @foreach (Restoranas.Models.Item patiekalas in Model)
-    {
-        if (patiekalas.parduodamas)
-        {
-            <div class="skiltis p-3">
-                <div>
-                    <p>@patiekalas.pavadinimas, @patiekalas.kaina€</p>
-                </div>
-            </div>
-        }
-    }
+	<div class="skiltiespavadinimas">
+		<p class="center">Restorano patiekalai</p>
+	</div>
+
+
+	<div class="row">
+		<div class="col-12 col-md-8 offset-md-2">
+			<a href="@Url.Action("OpenMealCreation", "Patiekalas")" class="btn btn-outline-dark btn-block">Kurti patiekalą</a>
+		</div>
+	</div>
+
+	@foreach (Restoranas.Models.Meal patiekalas in Model)
+	{
+		<div class="skiltis p-3 d-flex flex-column @(patiekalas.parduodamas ? "" : "dark-background")">
+			<div>
+				<p>@patiekalas.pavadinimas, @patiekalas.kaina€ @(patiekalas.parduodamas ? "" : "[Neparduodamas]")</p>
+			</div>
+			<div>
+				<a class="btn btn-outline-dark" asp-action="OpenMealEdit" asp-route-id="@patiekalas.patiekalo_Id">Redaguoti</a>
+				<a class="btn btn-outline-danger" asp-action="OpenMealDelete" asp-route-id="@patiekalas.patiekalo_Id">Ištrinti</a>
+			</div>
+		</div>
+	}
+
 
 </div>

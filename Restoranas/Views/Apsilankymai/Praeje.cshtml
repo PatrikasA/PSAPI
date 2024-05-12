@@ -2,12 +2,12 @@
 
 @{
     ViewData["Title"] = "Praeje";
+    string userName = ViewContext.HttpContext.Session.GetString("UserName");
 }
-
 <div class="phone">
     <div class="row mb-3">
         <div class="col">
-            <h1 class="center">Klientas | </h1>
+            <h1 class="center">Klientas | @userName</h1>
         </div>
     </div>
 

@@ -1,0 +1,49 @@
+﻿@model Restoranas.Models.Meal
+
+
+@if (TempData["ErrorMessage"] != null)
+{
+	<div class="row">
+		<div class="col-12 col-md-8 offset-md-2">
+			<br>
+			<div class="alert alert-danger">
+				@TempData["ErrorMessage"]
+			</div>
+		</div>
+	</div>
+}
+
+<div class="phone">
+	<div class="skiltiespavadinimas">
+		<p class="center">Kurti patiekalą</p>
+	</div>
+
+	<form asp-controller="Patiekalas" asp-action="CreateMeal" method="post">
+		<div class="form-group">
+			<label asp-for="pavadinimas" class="control-label"></label>
+			<input asp-for="pavadinimas" class="form-control" />
+			<span asp-validation-for="pavadinimas" class="text-danger"></span>
+		</div>
+		<div class="form-group">
+			<label asp-for="kaina" class="control-label"></label>
+			<input asp-for="kaina" class="form-control" />
+			<span asp-validation-for="kaina" class="text-danger"></span>
+		</div>
+		<div class="form-group">
+			<label asp-for="parduodamas" class="control-label"></label>
+			<select asp-for="parduodamas" class="form-control">
+				<option value="True">True</option>
+				<option value="False">False</option>
+			</select>
+			<span asp-validation-for="parduodamas" class="text-danger"></span>
+		</div>
+		<div class="form-group">
+			<button type="submit" class="btn btn-outline-dark btn-block">Kurti</button>
+		</div>
+	</form>
+
+	<div class="form-group text-center">
+		<br>
+		<a href="@Url.Action("MealsPage", "Patiekalas")" class="btn btn-outline-secondary">Grįžti</a>
+	</div>
+</div>
