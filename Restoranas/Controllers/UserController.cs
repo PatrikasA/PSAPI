@@ -29,7 +29,7 @@ namespace Restoranas.Controllers
                     try
                     {
                         conn.Open();
-                        var query = "SELECT * FROM naudotojas WHERE prisijungimo_vardas = @prisijungimoVardas AND slaptazodis = @slaptazodis";
+                        var query = "SELECT naudotojo_id, naudotojo_tipas_id FROM naudotojas WHERE prisijungimo_vardas = @prisijungimoVardas AND slaptazodis = @slaptazodis";
                         using (var cmd = new NpgsqlCommand(query, conn))
                         {
                             cmd.Parameters.AddWithValue("@prisijungimoVardas", userModel.prisijungimo_vardas);
@@ -37,19 +37,23 @@ namespace Restoranas.Controllers
 
                             using (var reader = cmd.ExecuteReader())
                             {
-                                //var userId = cmd.ExecuteScalar(); // Gauti naudotojo ID iš duomenų bazės
-
                                 if (reader.Read())
                                 {
+                                    userModel.naudotojo_id = reader.GetInt32(reader.GetOrdinal("naudotojo_id"));
+                                    int userType = reader.GetInt32(reader.GetOrdinal("naudotojo_tipas_id"));
 
-                                    // Gauti likusią naudotojo informaciją ir pridėti ją prie User objekto
-                                    userModel.naudotojo_id = reader.GetInt32(0);
-                                    // Čia galite pridėti kitus laukus, kuriuos norite saugoti User objekte
-
-                                    // Galite saugoti prisijungusio naudotojo informaciją sesijoje arba claims, jei reikia
                                     HttpContext.Session.SetInt32("UserId", userModel.naudotojo_id);
+                                    HttpContext.Session.SetInt32("UserType", userType);
 
-                                    return RedirectToAction("Aktualiausi", "Apsilankymai");
+                                    switch (userType)
+                                    {
+                                        case 2:  
+                                            return RedirectToAction("MainViewWaiter", "Waiter");
+                                        case 3:
+                                            return RedirectToAction("TablesPage", "Tables");
+                                        default:
+                                            return RedirectToAction("Aktualiausi", "Apsilankymai");
+                                    }
                                 }
                                 else
                                 {
@@ -67,6 +71,7 @@ namespace Restoranas.Controllers
 
             return View(userModel);
         }
+
 
         [HttpGet]
         public IActionResult Register()
