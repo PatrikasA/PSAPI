@@ -34,7 +34,7 @@
 
     <div class="row">
         <div class="col-12 col-md-8 offset-md-2">
-            <a href="@Url.Action("OpenRestaurantInfo", "Restaurant")" class="btn btn-outline-dark btn-block">Registruoti darbuotoją</a>
+            <a href="@Url.Action("AddEmployeeForm", "Employees")" class="btn btn-outline-dark btn-block">Registruoti darbuotoją</a>
         </div>
     </div>
 
@@ -54,7 +54,7 @@
                         <tr>
                             <td>@user.prisijungimo_vardas</td>
                             <td>@user.naudotojo_tipas_id</td>
-                            <td><a href="@Url.Action("OpenRestaurantInfo", "Restaurant")" class="btn btn-outline-dark btn-block">Atleisti</a></td>
+                            <td><a asp-action="RemoveEmployeeForm" asp-route-id="@user.naudotojo_id" class="btn btn-outline-dark">Atleisti</a></td>
                         </tr>
                     }
                 </tbody>

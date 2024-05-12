@@ -1,0 +1,13 @@
+﻿@model Restoranas.Models.User
+
+@{
+    ViewData["Title"] = "Atleisti darbuotoją";
+}
+
+<h2>Ar tikrai norite atleisti @Model.prisijungimo_vardas?</h2>
+
+<form asp-action="ConfirmRemoveEmployee" method="post">
+    <input type="hidden" name="naudotojo_id" value="@Model.naudotojo_id" />
+    <button type="submit" class="btn btn-danger">Patvirtinti</button>
+    <a asp-action="EmployeesPage" class="btn btn-secondary">Atšaukti</a>
+</form>
