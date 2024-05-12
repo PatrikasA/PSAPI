@@ -45,7 +45,6 @@ namespace Restoranas.Controllers
                                 uzbaigtas = reader.GetBoolean(reader.GetOrdinal("uzbaigtas"))
                             };
 
-                            // Determine if the visit is today or in the future
                             if (visit.data.Date <= today)
                             {
                                 todayVisits.Add(visit);
@@ -59,7 +58,6 @@ namespace Restoranas.Controllers
                 }
             }
 
-            // Combine the lists into a Tuple or use a ViewModel to pass both lists to the view
             var model = new Tuple<List<Visit>, List<Visit>>(todayVisits, futureVisits);
             return View(model);
         }

@@ -1,7 +1,7 @@
 ﻿@model Restoranas.Models.User
 
 @{
-    ViewData["Title"] = "Register Employee";
+    ViewData["Title"] = "Registruoti darbuotoją";
 }
 
 <h2>Registruoti darbuotoją</h2>
@@ -15,13 +15,13 @@
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
     <div class="form-group">
-        <label asp-for="prisijungimo_vardas">Username</label>
+        <label asp-for="prisijungimo_vardas">Vartotojo vardas</label>
         <input asp-for="prisijungimo_vardas" class="form-control" />
         <span asp-validation-for="prisijungimo_vardas" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label asp-for="slaptazodis">Password</label>
+        <label asp-for="slaptazodis">Slaptažodis</label>
         <input asp-for="slaptazodis" type="password" class="form-control" />
         <span asp-validation-for="slaptazodis" class="text-danger"></span>
     </div>
