@@ -299,7 +299,7 @@ namespace Restoranas.Controllers
                 {
                     while (reader.Read())
                     {
-                        var item = new Item
+                        var item = new Meal
                         {
                             patiekalo_Id = reader.GetInt32(reader.GetOrdinal("patiekalo_id")),
                             pavadinimas = reader.GetString(reader.GetOrdinal("pavadinimas")),

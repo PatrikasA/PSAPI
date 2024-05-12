@@ -255,12 +255,56 @@ namespace Restoranas.Controllers
             return View();
         }
 
-        // Returns future visits
-        private async Task<List<Visit>> RefreshVisits()
-        {
-            List<Visit> futureVisits = new List<Visit>();
+		// Returns future visits
+		private async Task<List<Visit>> RefreshVisits()
+		{
+			List<Visit> futureVisits = new List<Visit>();
 
-            string query = "SELECT * FROM apsilankymas WHERE data >= CURRENT_DATE ORDER BY data";
+			string query = "SELECT * FROM apsilankymas WHERE data >= CURRENT_DATE ORDER BY data";
+
+			using (var conn = new NpgsqlConnection(connString))
+			{
+				await conn.OpenAsync();
+
+				using (var cmd = new NpgsqlCommand(query, conn))
+				{
+					using (var reader = await cmd.ExecuteReaderAsync())
+					{
+						while (await reader.ReadAsync())
+						{
+							int visitId = reader.GetInt32(reader.GetOrdinal("apsilankymo_id"));
+
+                            List<(string Pavadinimas, double Kaina, int Kiekis)> orderedMeals = await GetOrderedMealsForVisit(visitId);
+
+							futureVisits.Add(new Visit
+							{
+								apsilankymo_id = visitId,
+								data = reader.GetDateTime(reader.GetOrdinal("data")),
+								zmoniu_skaicius = reader.GetInt32(reader.GetOrdinal("zmoniu_skaicius")),
+								apmoketas = reader.GetBoolean(reader.GetOrdinal("apmoketas")),
+								naudotojo_id = reader.GetInt32(reader.GetOrdinal("naudotojo_id")),
+								staliuko_nr = reader.GetInt32(reader.GetOrdinal("staliuko_nr")),
+								uzbaigtas = reader.GetBoolean(reader.GetOrdinal("uzbaigtas")),
+								OrderedMeals = orderedMeals
+							});
+						}
+					}
+				}
+			}
+
+			return futureVisits;
+		}
+
+        private async Task<List<(string Pavadinimas, double Kaina, int Kiekis)>> GetOrderedMealsForVisit(int visitId)
+        {
+            List<(string Pavadinimas, double Kaina, int Kiekis)> orderedMeals = new List<(string, double, int)>();
+
+            string query = @"
+        SELECT p.pavadinimas, p.kaina, SUM(up.kiekis) AS total_kiekis
+        FROM patiekalas p
+        JOIN uzsakytas_patiekalas up ON p.patiekalo_id = up.patiekalo_id
+        WHERE up.apsilankymo_id = @VisitId
+        GROUP BY p.pavadinimas, p.kaina";
 
             using (var conn = new NpgsqlConnection(connString))
             {
@@ -268,27 +312,27 @@ namespace Restoranas.Controllers
 
                 using (var cmd = new NpgsqlCommand(query, conn))
                 {
+                    cmd.Parameters.AddWithValue("@VisitId", visitId);
+
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
                         while (await reader.ReadAsync())
                         {
-                            futureVisits.Add(new Visit
-                            {
-                                apsilankymo_id = reader.GetInt32(reader.GetOrdinal("apsilankymo_id")),
-                                data = reader.GetDateTime(reader.GetOrdinal("data")),
-                                zmoniu_skaicius = reader.GetInt32(reader.GetOrdinal("zmoniu_skaicius")),
-                                apmoketas = reader.GetBoolean(reader.GetOrdinal("apmoketas")),
-                                naudotojo_id = reader.GetInt32(reader.GetOrdinal("naudotojo_id")),
-                                staliuko_nr = reader.GetInt32(reader.GetOrdinal("staliuko_nr")),
-                                uzbaigtas = reader.GetBoolean(reader.GetOrdinal("uzbaigtas"))
-                            });
+                            orderedMeals.Add((
+                                Pavadinimas: reader.GetString(reader.GetOrdinal("pavadinimas")),
+                                Kaina: reader.GetDouble(reader.GetOrdinal("kaina")),
+                                Kiekis: reader.GetInt32(reader.GetOrdinal("total_kiekis"))
+                            ));
                         }
                     }
                 }
             }
 
-            return futureVisits;
+            return orderedMeals;
         }
+
+
+
 
         public IActionResult Meniu()
         {

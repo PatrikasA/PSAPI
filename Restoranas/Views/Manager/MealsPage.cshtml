@@ -1,11 +1,12 @@
-﻿@model List<Restoranas.Models.Item>
+﻿@model List<Restoranas.Models.Meal>
 @{
 	ViewData["Title"] = "Meniu";
+	string userName = ViewContext.HttpContext.Session.GetString("UserName");
 }
 <div class="phone">
 	<div class="row mb-3">
 		<div class="col">
-			<h1 class="center">Vadovas | Jonas Jonaitis</h1>
+			<h1 class="center">Vadovas | @userName</h1>
 		</div>
 	</div>
 
@@ -41,7 +42,7 @@
 		</div>
 	</div>
 
-	@foreach (Restoranas.Models.Item patiekalas in Model)
+	@foreach (Restoranas.Models.Meal patiekalas in Model)
 	{
 		<div class="skiltis p-3 d-flex flex-column @(patiekalas.parduodamas ? "" : "dark-background")">
 			<div>

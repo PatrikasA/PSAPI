@@ -17,7 +17,7 @@ namespace Restoranas.Controllers
         [HttpGet]
         public IActionResult CreateProduct()
         {
-            Item naujasPatiekalas = new Item(); // Sukurkite naują Item objektą
+            Meal naujasPatiekalas = new Meal(); // Sukurkite naują Item objektą
             return View(naujasPatiekalas);
         }
 
@@ -25,7 +25,7 @@ namespace Restoranas.Controllers
         
         public ActionResult Index()
         {
-            List<Item> patiekalai = new List<Item>();
+            List<Meal> patiekalai = new List<Meal>();
 
             // Connection string
             string connString = "Host=ep-solitary-forest-a28gt5ec-pooler.eu-central-1.aws.neon.tech;Port=5432;Database=psapi_faxai;Username=psapi_faxai_owner;Password=g3xbiOmuETp7;";
@@ -38,11 +38,11 @@ namespace Restoranas.Controllers
                     // Open connection
                     conn.Open();
 
-                    // Query to select all rows from the "Item" table
-                    string query = "SELECT * FROM patiekalas";
+					// Query to select all rows from the "Item" table
+					string query = "SELECT * FROM patiekalas WHERE parduodamas = true";
 
-                    // Create a command to execute the query
-                    using (var cmd = new NpgsqlCommand(query, conn))
+					// Create a command to execute the query
+					using (var cmd = new NpgsqlCommand(query, conn))
                     {
                         // Execute the query and obtain a reader
                         using (var reader = cmd.ExecuteReader())
@@ -57,7 +57,7 @@ namespace Restoranas.Controllers
                                 bool parduodamas = reader.GetBoolean(3);
 
                                 // Create Item object and add it to the list
-                                patiekalai.Add(new Item { patiekalo_Id = patiekaloId, pavadinimas = pavadinimas, kaina = kaina, parduodamas = parduodamas });
+                                patiekalai.Add(new Meal { patiekalo_Id = patiekaloId, pavadinimas = pavadinimas, kaina = kaina, parduodamas = parduodamas });
                             }
                         }
                     }
@@ -81,7 +81,7 @@ namespace Restoranas.Controllers
 
         public ActionResult GetMeals(int uzsakymoId)
         {
-            List<Item> patiekalai = new List<Item>();
+            List<Meal> patiekalai = new List<Meal>();
             ViewBag.uzsakymoId = uzsakymoId;
             // Connection string
             string connString = "Host=ep-solitary-forest-a28gt5ec-pooler.eu-central-1.aws.neon.tech;Port=5432;Database=psapi_faxai;Username=psapi_faxai_owner;Password=g3xbiOmuETp7;";
@@ -94,11 +94,11 @@ namespace Restoranas.Controllers
                     // Open connection
                     conn.Open();
 
-                    // Query to select all rows from the "Item" table
-                    string query = "SELECT * FROM patiekalas";
+					// Query to select all rows from the "Item" table
+					string query = "SELECT * FROM patiekalas WHERE parduodamas = true";
 
-                    // Create a command to execute the query
-                    using (var cmd = new NpgsqlCommand(query, conn))
+					// Create a command to execute the query
+					using (var cmd = new NpgsqlCommand(query, conn))
                     {
                         // Execute the query and obtain a reader
                         using (var reader = cmd.ExecuteReader())
@@ -113,7 +113,7 @@ namespace Restoranas.Controllers
                                 bool parduodamas = reader.GetBoolean(3);
 
                                 // Create Item object and add it to the list
-                                patiekalai.Add(new Item { patiekalo_Id = patiekaloId, pavadinimas = pavadinimas, kaina = kaina, parduodamas = parduodamas });
+                                patiekalai.Add(new Meal { patiekalo_Id = patiekaloId, pavadinimas = pavadinimas, kaina = kaina, parduodamas = parduodamas });
                             }
                         }
                     }
@@ -169,7 +169,7 @@ namespace Restoranas.Controllers
 
         public ActionResult MealsPage()
         {
-            List<Item> patiekalai = new List<Item>();
+            List<Meal> patiekalai = new List<Meal>();
 
             // Connection string
 
@@ -181,11 +181,11 @@ namespace Restoranas.Controllers
                     // Open connection
                     conn.Open();
 
-                    // Query to select all rows from the "Item" table
-                    string query = "SELECT * FROM patiekalas";
+					// Query to select all rows from the "Item" table
+					string query = "SELECT * FROM patiekalas ORDER BY parduodamas DESC, patiekalo_id";
 
-                    // Create a command to execute the query
-                    using (var cmd = new NpgsqlCommand(query, conn))
+					// Create a command to execute the query
+					using (var cmd = new NpgsqlCommand(query, conn))
                     {
                         // Execute the query and obtain a reader
                         using (var reader = cmd.ExecuteReader())
@@ -200,7 +200,7 @@ namespace Restoranas.Controllers
                                 bool parduodamas = reader.GetBoolean(3);
 
                                 // Create Item object and add it to the list
-                                patiekalai.Add(new Item { patiekalo_Id = patiekaloId, pavadinimas = pavadinimas, kaina = kaina, parduodamas = parduodamas });
+                                patiekalai.Add(new Meal { patiekalo_Id = patiekaloId, pavadinimas = pavadinimas, kaina = kaina, parduodamas = parduodamas });
                             }
                         }
                     }
@@ -223,13 +223,13 @@ namespace Restoranas.Controllers
         [HttpGet]
         public IActionResult OpenMealCreation()
         {
-            Item naujasPatiekalas = new Item(); // Sukurkite naują Item objektą
+            Meal naujasPatiekalas = new Meal(); // Sukurkite naują Item objektą
             return View("~/Views/Manager/MealCreateForm.cshtml", naujasPatiekalas);
         }
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> CreateMeal(Item mealModel)
+		public async Task<IActionResult> CreateMeal(Meal mealModel)
 		{
 			if (ModelState.IsValid)
 			{
@@ -282,7 +282,7 @@ namespace Restoranas.Controllers
 
 		public async Task<IActionResult> OpenMealDelete(int id)
         {
-            Item itemToDelete = null;
+            Meal itemToDelete = null;
 
             // Connect to the database and retrieve the item with the specified ID
             using (var conn = new NpgsqlConnection(connString))
@@ -306,7 +306,7 @@ namespace Restoranas.Controllers
                                 double kaina = reader.GetDouble(2);
                                 bool parduodamas = reader.GetBoolean(3);
 
-                                itemToDelete = new Item { patiekalo_Id = patiekaloId, pavadinimas = pavadinimas, kaina = kaina, parduodamas = parduodamas };
+                                itemToDelete = new Meal { patiekalo_Id = patiekaloId, pavadinimas = pavadinimas, kaina = kaina, parduodamas = parduodamas };
                             }
                             else
                             {
@@ -401,7 +401,7 @@ namespace Restoranas.Controllers
 			return View("~/Views/Manager/MealEditForm.cshtml", mealInfo);
 		}
 
-		private Item GetMealInfoById(int id)
+		private Meal GetMealInfoById(int id)
 		{
 			using (var connection = new NpgsqlConnection(connString))
 			{
@@ -417,7 +417,7 @@ namespace Restoranas.Controllers
 					{
 						if (reader.Read())
 						{
-							var mealInfo = new Item
+							var mealInfo = new Meal
 							{
 								patiekalo_Id = reader.GetInt32(reader.GetOrdinal("patiekalo_id")),
 								pavadinimas = reader.GetString(reader.GetOrdinal("pavadinimas")),
@@ -435,7 +435,7 @@ namespace Restoranas.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditMeal(Item mealModel)
+        public async Task<IActionResult> EditMeal(Meal mealModel)
         {
             if (ModelState.IsValid)
             {
