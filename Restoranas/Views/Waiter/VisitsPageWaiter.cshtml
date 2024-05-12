@@ -1,42 +1,52 @@
-﻿@model List<Restoranas.Models.Visit>
-
+﻿@model Tuple<List<Restoranas.Models.Visit>, List<Restoranas.Models.Visit>>
 @{
     ViewData["Title"] = "Dabartiniai vizitai";
 }
 
-<h2>Active Visits</h2>
+<h2>Šiandienos vizitai</h2>
+@{
+    RenderVisitsTable(Model.Item1);
+}
 
-<a href="@Url.Action("CreateVisit", "Waiter")" class="btn btn-primary">Sukurti Apsilankymą</a>
+<h2>Ateities vizitai</h2>
+@{
+    RenderVisitsTable(Model.Item2);
+}
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Data</th>
-            <th>Žmonių skaičius</th>
-            <th>Apmokėta</th>
-            <th>Kliento ID</th>
-            <th>Staliuko numeris</th>
-            <th>Užbaigtas</th>
-            <th>Veiksmai</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var visit in Model)
-        {
-            <tr>
-                <td>@visit.apsilankymo_id</td>
-                <td>@visit.data.ToString("yyyy-MM-dd HH:mm")</td>
-                <td>@visit.zmoniu_skaicius</td>
-                <td>@(visit.apmoketas ? "Taip" : "Ne")</td>
-                <td>@visit.naudotojo_id</td>
-                <td>@visit.staliuko_nr</td>
-                <td>@(visit.uzbaigtas ? "Taip" : "Ne")</td>
-                <td>
-                    @Html.ActionLink("Valdymas", "VisitDetails", new { id = visit.apsilankymo_id }, new { @class = "btn btn-info" })
-                    <button class="btn btn-warning" onclick="location.href='@Url.Action("CancelVisitConfirmation", "Waiter", new { id = visit.apsilankymo_id })'">Atšaukti vizitą</button>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+@{
+    void RenderVisitsTable(List<Restoranas.Models.Visit> visits)
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Data</th>
+                    <th>Žmonių skaičius</th>
+                    <th>Apmokėta</th>
+                    <th>Kliento ID</th>
+                    <th>Staliuko numeris</th>
+                    <th>Užbaigtas</th>
+                    <th>Veiksmai</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var visit in visits)
+                {
+                    <tr>
+                        <td>@visit.apsilankymo_id</td>
+                        <td>@visit.data.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td>@visit.zmoniu_skaicius</td>
+                        <td>@(visit.apmoketas ? "Taip" : "Ne")</td>
+                        <td>@visit.naudotojo_id</td>
+                        <td>@visit.staliuko_nr</td>
+                        <td>@(visit.uzbaigtas ? "Taip" : "Ne")</td>
+                        <td>
+                            @Html.ActionLink("Valdymas", "VisitDetails", new { id = visit.apsilankymo_id }, new { @class = "btn btn-info" })
+                            <button class="btn btn-warning" onclick="location.href='@Url.Action("CancelVisitConfirmation", "Waiter", new { id = visit.apsilankymo_id })'">Atšaukti vizitą</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}

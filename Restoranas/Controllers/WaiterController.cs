@@ -21,17 +21,20 @@ namespace Restoranas.Controllers
         public IActionResult VisitsPageWaiter()
         {
             var visits = new List<Visit>();
+            var todayVisits = new List<Visit>();
+            var futureVisits = new List<Visit>();
             using (var conn = new NpgsqlConnection(connString))
             {
                 conn.Open();
-                var query = "SELECT * FROM apsilankymas WHERE uzbaigtas = false OR apmoketas = false";
+                var query = "SELECT * FROM apsilankymas WHERE uzbaigtas = false OR apmoketas = false ORDER BY data";
                 using (var cmd = new NpgsqlCommand(query, conn))
                 {
                     using (var reader = cmd.ExecuteReader())
                     {
+                        var today = DateTime.Today;
                         while (reader.Read())
                         {
-                            visits.Add(new Visit
+                            var visit = new Visit
                             {
                                 apsilankymo_id = reader.GetInt32(reader.GetOrdinal("apsilankymo_id")),
                                 data = reader.GetDateTime(reader.GetOrdinal("data")),
@@ -40,13 +43,27 @@ namespace Restoranas.Controllers
                                 naudotojo_id = reader.IsDBNull(reader.GetOrdinal("naudotojo_id")) ? (int?)null : reader.GetInt32(reader.GetOrdinal("naudotojo_id")),
                                 staliuko_nr = reader.GetInt32(reader.GetOrdinal("staliuko_nr")),
                                 uzbaigtas = reader.GetBoolean(reader.GetOrdinal("uzbaigtas"))
-                            });
+                            };
+
+                            // Determine if the visit is today or in the future
+                            if (visit.data.Date <= today)
+                            {
+                                todayVisits.Add(visit);
+                            }
+                            else
+                            {
+                                futureVisits.Add(visit);
+                            }
                         }
                     }
                 }
             }
-            return View(visits);
+
+            // Combine the lists into a Tuple or use a ViewModel to pass both lists to the view
+            var model = new Tuple<List<Visit>, List<Visit>>(todayVisits, futureVisits);
+            return View(model);
         }
+
 
         [HttpGet]
         public IActionResult CancelVisitConfirmation(int id)
