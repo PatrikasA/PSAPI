@@ -1,11 +1,12 @@
 ﻿@model Restoranas.Models.Visit
 @{
     ViewData["Title"] = "Visit Creation Form";
+    string userName = ViewContext.HttpContext.Session.GetString("UserName");
 }
 <div class="phone">
     <div class="row mb-3">
         <div class="col">
-            <h1 class="center">Klientas | Jonas Jonaitis</h1>
+            <h1 class="center">Klientas | @userName</h1>
             <h2 class="center">Rezervuoti staliuką</h2>
         </div>
 
