@@ -41,13 +41,13 @@ namespace Restoranas.Controllers
         }
         public IActionResult CreateVisit(Visit visit)
         {
+            visit.OrderedMeals = new List<(string Pavadinimas, double Kaina, int Kiekis)>();
             if (!ModelState.IsValid)
             {
                 return View("VisitCreationForm", visit);
             }
 
-            //
-            // Check if the user has not already made a reservation for the selected day
+            // Check if user has not made any other reservation the same time
             string checkQuery = "SELECT COUNT(*) FROM apsilankymas WHERE naudotojo_id = @userId AND DATE(data) = DATE(@visitDate)";
             bool hasReservation;
 
@@ -59,7 +59,7 @@ namespace Restoranas.Controllers
                 conn.Open();
                 using (var cmd = new NpgsqlCommand(checkQuery, conn))
                 {
-                    cmd.Parameters.AddWithValue("@userId", userId); // Assuming 6 is the user's ID
+                    cmd.Parameters.AddWithValue("@userId", userId);
                     cmd.Parameters.AddWithValue("@visitDate", visit.data);
 
                     long count = (long)cmd.ExecuteScalar();
@@ -74,17 +74,17 @@ namespace Restoranas.Controllers
                 return View("VisitCreationForm");
             }
 
-            // Surasti tinkamą staliukų kombinaciją rezervacijai
+            // Find optimal table combination for the reservation
             List<int> optimalTables = FindOptimalTableCombination(visit);
 
-            // If no optimal tables found
+            // Table combination not found
             if (optimalTables.Count == 0)
             {
                 TempData["ErrorMessage"] = "Laisvų staliukų, kurie tenktintų jūsų pasirinktą žmonių skaičių pasirinktu laiku nėra.";
                 return View("VisitCreationForm");
             }
 
-            // Create new Visit
+            // Create reservation
             string insertQuery = "INSERT INTO apsilankymas (data, zmoniu_skaicius, apmoketas, naudotojo_id, staliuko_nr, uzbaigtas) " +
                                  "VALUES (@data, @peopleCount, @paid, @userId, @tableNumber, @completed)";
 
@@ -165,7 +165,6 @@ namespace Restoranas.Controllers
         {
             List<TableInfo> allTables = new List<TableInfo>();
 
-            // Select all tables
             string query = "SELECT staliuko_nr, vietos FROM staliukas";
 
             using (var conn = new NpgsqlConnection(connString))

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.ComponentModel.DataAnnotations;
 
 namespace Restoranas.Models
 {
@@ -18,6 +19,7 @@ namespace Restoranas.Models
         public int staliuko_nr { get; set; }    
         public bool uzbaigtas { get; set; }
 
-		public List<(string Pavadinimas, double Kaina, int Kiekis)> OrderedMeals { get; set; }
-	}
+
+        public List<(string Pavadinimas, double Kaina, int Kiekis)>? OrderedMeals { get; set; }
+    }
 }
